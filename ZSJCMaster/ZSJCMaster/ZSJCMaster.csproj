@@ -80,6 +80,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\AlarmLamp.cs" />
+    <Compile Include="Models\Comm.cs" />
     <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -135,7 +137,6 @@
   <ItemGroup>
     <Folder Include="Langs\" />
     <Folder Include="Libs\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
