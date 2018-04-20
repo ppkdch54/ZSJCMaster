@@ -16,95 +16,22 @@ using System.IO.Ports;
 
 namespace ZSJCMaster.Models
 {
+
     public class AlarmLamp
     {
-        string portName;
-        int baudRate;
-        System.IO.Ports.Parity parity;
-        int dataBits;
-        StopBits stopBits;
-
         SerialComm serialComm;
 
         public int ReceivedTotalLength { get; private set; }
         public int ReceivedLoopCount { get; private set; }
 
-        public string PortName
-        {
-            get { return portName; }
-            set
-            {
-                portName = value;
-            }
-        }
-        public int BaudRate
-        {
-            get { return baudRate; }
-            set
-            {
-                baudRate = value;
-            }
-        }
-        public Parity Parity
-        {
-            get { return parity; }
-            set
-            {
-                parity = value;
-            }
-        }
-        public int DataBits
-        {
-            get { return dataBits; }
-            set
-            {
-                dataBits = value;
-            }
-        }
-        public StopBits StopBits
-        {
-            get { return stopBits; }
-            set
-            {
-                stopBits = value;
-            }
-        }
-
         //构造函数,打开串口
         public AlarmLamp()
         {
-            LoadPara();//载入串口配置参数
-            serialComm = new SerialComm(PortName,BaudRate,Parity,DataBits,StopBits);
+            serialComm = new SerialComm();
+            serialComm.InitialSerial();
             //serialComm.Serial.DataReceived += new SerialDataReceivedEventHandler(serial_DataReceived);//DataReceived事件委托
-            //OpenSerial();
         }
 
-        private void LoadPara()
-        {
-            //XmlConfigHelper config = new XmlConfigHelper();
-            //config.Load("Application.config");
-            //PortName = config.ReadNodeValue("portName");
-            //BaudRate = int.Parse(config.ReadNodeValue("baudRate"));
-            //Parity = (Parity)int.Parse(config.ReadNodeValue("parity"));
-            //DataBits = int.Parse(config.ReadNodeValue("dataBits"));
-            //StopBits = (StopBits)int.Parse(config.ReadNodeValue("stopBits"));
-        }
-
-        public void SavePara()
-        {
-            /*
-            Properties.Settings.Default.PortName=PortName;
-            Properties.Settings.Default.BaudRate=BaudRate;
-            Properties.Settings.Default.Parity=int.Parse(Parity.ToString());
-            Properties.Settings.Default.DataBits=DataBits;
-            Properties.Settings.Default.StopBits=int.Parse(StopBits.ToString());
-            */
-        }
-
-        public void OpenSerial()
-        {
-            serialComm.Open();
-        }
         /// <summary>
         /// 开始闪光加声音警报
         /// </summary>
