@@ -1,5 +1,4 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,20 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ZSJCMaster.ViewModels;
 
-namespace ZSJCMaster.Views
+namespace ZSJCMaster.Pages
 {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    /// Interaction logic for MainPage.xaml
     /// </summary>
-    public partial class MainWindow : ModernWindow
+    public partial class MainPage : UserControl
     {
-        public MainWindow()
+        public MainPage()
         {
             InitializeComponent();
-            this.DataContext = new MainWindowViewModel();
         }
     }
 }
