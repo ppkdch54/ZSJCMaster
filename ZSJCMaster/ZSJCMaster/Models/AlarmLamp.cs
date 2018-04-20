@@ -75,7 +75,7 @@ namespace ZSJCMaster.Models
         {
             LoadPara();//载入串口配置参数
             serialComm = new SerialComm(PortName,BaudRate,Parity,DataBits,StopBits);
-            serialComm.Serial.DataReceived += new SerialDataReceivedEventHandler(serial_DataReceived);//DataReceived事件委托
+            //serialComm.Serial.DataReceived += new SerialDataReceivedEventHandler(serial_DataReceived);//DataReceived事件委托
             //OpenSerial();
         }
 

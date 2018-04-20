@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.IO.Ports;
 using System.Net.Sockets;
 
