@@ -4,14 +4,8 @@ using ZSJCMaster.Helpers;
 
 namespace ZSJCMaster.Models
 {
-    interface ICamera
-    {
-        void StartDetect();
-        void StopCap();
-        void ShowVideo();
-        void CapturePic();
-    }
-    public class Camera : BindableBase,ICamera
+
+    public class Camera : BindableBase
     {
         /// <summary>
         /// 相机编号
