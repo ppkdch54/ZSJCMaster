@@ -10,7 +10,7 @@
         Height="450" Width="780" WindowStartupLocation="CenterScreen">
     <mui:ModernWindow.MenuLinkGroups>
         <mui:LinkGroup DisplayName="设备监控" >
-            <mui:LinkGroup.Links>
+            <mui:LinkGroup.Links >
                 <mui:Link Source="Pages\MainPage.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>

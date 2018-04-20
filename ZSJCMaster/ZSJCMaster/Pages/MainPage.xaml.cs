@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ZSJCMaster.ViewModels;
 
 namespace ZSJCMaster.Pages
 {
@@ -23,6 +24,7 @@ namespace ZSJCMaster.Pages
         public MainPage()
         {
             InitializeComponent();
+            this.DataContext = new MainWindowViewModel();
         }
     }
 }
