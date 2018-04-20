@@ -9,7 +9,9 @@ namespace ZSJCMaster.Models
     public class ControlPad: BindableBase
     {
         private string name;
-
+        byte[] sendCommand;
+        byte[] recData;
+        TcpComm tcpComm;
         /// <summary>
         /// 控制板名称
         /// </summary>
@@ -73,6 +75,10 @@ namespace ZSJCMaster.Models
         //构造函数,打开串口
         public ControlPad()
         {
+            tcpComm = new TcpComm();
+            sendCommand = new byte[30];
+            sendCommand[0] = 0x87;
+            sendCommand[29] = 0x0a;
 
         }
 
@@ -84,6 +90,12 @@ namespace ZSJCMaster.Models
         public void SavePara()
         {
 
+        }
+
+        public void SwitchNetPort(int tcpPortNo)
+        {
+            sendCommand[6] = (byte)tcpPortNo;
+            tcpComm.SendData(sendCommand);
         }
 
 

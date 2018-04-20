@@ -1,6 +1,7 @@
 ﻿using Prism.Mvvm;
 using System;
 using System.IO.Ports;
+using System.Net.Http;
 using System.Net.Sockets;
 using ZSJCMaster.Helpers;
 
@@ -118,6 +119,34 @@ namespace ZSJCMaster.Models
             DataBits = int.Parse(config.ReadNodeValue("dataBits"));
             StopBits = (StopBits)int.Parse(config.ReadNodeValue("stopBits"));
         }
+    }
+    public class TcpComm : BindableBase
+    {
+        TcpClient client;
+        NetworkStream ns;
+        public TcpComm() { }
+        public TcpComm(string ip, int port)
+        {
+            client = new TcpClient(ip, port);
+            ns = client.GetStream();
+            
+        }
+
+        ~TcpComm()
+        {
+            ns.Close();
+            client.Close();
+        }
+        /// <summary>
+        /// 发送数据
+        /// </summary>
+        /// <param name="data">要发送的数据</param>
+        public void SendData(byte[] data)
+        {
+            ns.Write(data, 0, data.Length);
+        }
+
+        
     }
 
 }

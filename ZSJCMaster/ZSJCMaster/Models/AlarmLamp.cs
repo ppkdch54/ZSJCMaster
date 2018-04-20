@@ -21,10 +21,6 @@ namespace ZSJCMaster.Models
     {
         SerialComm serialComm;
 
-        public int ReceivedTotalLength { get; private set; }
-        public int ReceivedLoopCount { get; private set; }
-
-        //构造函数,打开串口
         public AlarmLamp()
         {
             serialComm = new SerialComm();
