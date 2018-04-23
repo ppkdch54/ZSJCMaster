@@ -1,5 +1,6 @@
 ﻿using Prism.Mvvm;
 using System;
+using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Net;
 using System.Net.Http;
@@ -122,6 +123,9 @@ namespace ZSJCMaster.Models
             StopBits = (StopBits)int.Parse(config.ReadNodeValue("stopBits"));
         }
     }
+
+    public delegate void TcpRecvDelegate(AlarmInfo[] alarms, bool[] flags);
+
     public class TcpComm : BindableBase
     {
         TcpClient client;
@@ -129,7 +133,16 @@ namespace ZSJCMaster.Models
         TcpListener server;
         string ip;
         int port;
-        //public delegate void TcpRecvMethod();
+
+        private TcpRecvDelegate tcpRecv;
+        public TcpRecvDelegate TcpRecv
+        {
+            get { return tcpRecv; }
+            set
+            {
+                tcpRecv = value;
+            }
+        }
 
         public TcpComm() { }
         public TcpComm(string ip, int port)
@@ -185,6 +198,7 @@ namespace ZSJCMaster.Models
                     {
                         //byte[] information analysis
                         Decode(bytes);
+
                     }
                     // Shutdown and end connection  
                     client.Close();
@@ -226,6 +240,10 @@ namespace ZSJCMaster.Models
                         AlarmInfos[i + index * 4 + 2].y = bytes[i + index * 4 + 2 + offset];
                         AlarmInfos[i + index * 4 + 3].width = bytes[i + index * 4 + 3 + offset];
                     }
+                    if (this.TcpRecv != null)
+                    {
+                        this.TcpRecv(AlarmInfos,AlarmFlags);
+                    }
                 }
             }
         }
@@ -234,13 +252,16 @@ namespace ZSJCMaster.Models
         public int CurrentNetPort { get; set; }
         public AlarmInfo[] AlarmInfos { get; set; }
 
-        public class AlarmInfo:BindableBase
-        {
-            public int cameraNo { get; set; }
-            public int x { get; set; }
-            public int y { get; set; }
-            public int width { get; set; }
-        }
+
+        
+    }
+
+    public class AlarmInfo : BindableBase
+    {
+        public int cameraNo { get; set; }
+        public int x { get; set; }
+        public int y { get; set; }
+        public int width { get; set; }
     }
 
 }

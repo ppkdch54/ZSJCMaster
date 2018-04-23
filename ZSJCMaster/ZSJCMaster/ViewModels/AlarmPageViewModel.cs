@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ZSJCMaster.Models.TcpComm;
+using ZSJCMaster.Models;
 
 namespace ZSJCMaster.ViewModels
 {
@@ -29,6 +29,8 @@ namespace ZSJCMaster.ViewModels
         public AlarmPageViewModel()
         {
             this.AlarmInfos = new ObservableCollection<AlarmInfo>();
+            ControlPad pad = new ControlPad();
+            this.AlarmInfos = pad.AlarmInfos;
         }
 
     }

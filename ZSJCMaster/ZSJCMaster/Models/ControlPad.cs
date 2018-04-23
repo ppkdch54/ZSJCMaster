@@ -91,43 +91,52 @@ namespace ZSJCMaster.Models
             }
         }
 
+        private ObservableCollection<AlarmInfo> alarmInfos;
+
+        /// <summary>
+        /// 报警信息集合
+        /// </summary>
+        public ObservableCollection<AlarmInfo> AlarmInfos
+        {
+            get { return alarmInfos; }
+            set
+            {
+                alarmInfos = value;
+                this.RaisePropertyChanged("AlarmInfos");
+            }
+        }
+
+
         //构造函数,打开串口
         public ControlPad()
         {
-            //LoadPara();
-            tcpComm = new TcpComm();
+            LoadPara();
+            tcpComm = new TcpComm(IP,PortNum);
+            tcpComm.TcpRecv = (AlarmInfo[] info,bool[] flags) => 
+            {
+                for (int i = 0; i < flags.Length; i++)
+                {
+                    if (flags[i])
+                    {
+                        AlarmInfos.Add(info[i]);
+                    }
+                }
+            };
             command = new byte[5];
             command[0] = 0x87;
             command[4] = 0x0a;
         }
 
-        //public void LoadPara()
-        //{
-        //    XDocument doc = XDocument.Load("Application.config");
-        //    var controlpad = doc.Descendants("controlpad").SingleOrDefault();
-        //    if (controlpad == null) { return; }
-        //    this.Id = int.Parse(controlpad.Attribute("id").Value);
-        //    this.Name = controlpad.Attribute("name").Value;
-        //    this.IP = controlpad.Attribute("ip").Value;
-
-        //    this.Cameras = new List<Camera>();
-        //    var cameras = controlpad.Descendants("cameras").Descendants("camera");
-        //    if (cameras == null) { return; }
-        //    foreach (var item in cameras)
-        //    {
-        //        var props = item.Descendants();
-        //        Camera camera = new Camera()
-        //        {
-        //            No = int.Parse(item.Attribute("id").Value),
-        //            Name = item.Attribute("name").Value,
-        //            IP = props.SingleOrDefault(p => p.Name == "ip").Value,
-        //            BeltNo = int.Parse(props.SingleOrDefault(p=>p.Name == "beltNo").Value),
-        //            NetPortNum = int.Parse(props.SingleOrDefault(p=>p.Name == "netPortNum").Value),
-        //            AlarmPicDir = props.SingleOrDefault(p=>p.Name == "alarmPicDir").Value
-        //        };
-        //        this.Cameras.Add(camera);
-        //    }
-        //}
+        public void LoadPara()
+        {
+            XDocument doc = XDocument.Load("Application.config");
+            var controlpad = doc.Descendants("controlpad").SingleOrDefault();
+            if (controlpad == null) { return; }
+            this.Id = int.Parse(controlpad.Attribute("id").Value);
+            this.Name = controlpad.Attribute("name").Value;
+            this.IP = controlpad.Attribute("ip").Value;
+            this.PortNum = int.Parse(controlpad.Attribute("port").Value);
+        }
 
         /// <summary>
         /// 从配置文件读取指定编号的控制板的所有相机信息
