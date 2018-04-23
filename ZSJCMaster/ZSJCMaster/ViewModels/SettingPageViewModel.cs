@@ -24,6 +24,7 @@ namespace ZSJCMaster.ViewModels
         public DelegateCommand<ExCommandParameter> CellEditEndingCommand { get; set; }
         public DelegateCommand<ExCommandParameter> RowEditEndingCommand { get; set; }
         public DelegateCommand<ExCommandParameter> EditControlPadCommand { get; set; }
+        public DelegateCommand<ExCommandParameter> DeleteControlPadCommand { get; set; }
         public DelegateCommand AddNewControlPadCommand { get; set; }
         #endregion commands
 
@@ -146,6 +147,11 @@ namespace ZSJCMaster.ViewModels
             dgvControlPads.SelectionMode = DataGridSelectionMode.Single;
        
             
+        }
+
+        private void DeleteControlPad(ExCommandParameter param)
+        {
+
         }
         #endregion command functions
 

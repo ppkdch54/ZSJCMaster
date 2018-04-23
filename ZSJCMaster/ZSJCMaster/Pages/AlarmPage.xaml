@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="ZSJCMaster.Pages.AlarmPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:helper="clr-namespace:ZSJCMaster.Helpers"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="500">
+    <UserControl.Resources>
+        <Style x:Key="contentCenterStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Style="{StaticResource ContentRoot}">
+        <ScrollViewer VerticalAlignment="Stretch" Margin="-10 -40 0 0">
+            <DataGrid x:Name="dgvControlPads" Grid.Row="1" Margin="0 10" 
+                      ItemsSource="{Binding AlarmInfos}" AutoGenerateColumns="False" 
+                      CanUserAddRows="False" SelectionMode="Single">
+                <DataGrid.Columns>
+                    <mui:DataGridTextColumn Width="30" Binding="{Binding Id}" IsReadOnly="True" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <mui:DataGridTextColumn Header="相机" Width="140" Binding="{Binding cameraNo}" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <mui:DataGridTextColumn Header="X坐标" Width="140" Binding="{Binding x}" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <mui:DataGridTextColumn Header="Y坐标" Binding="{Binding y}" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="btnDeleteControlPad" Tag="{Binding Id}" Content="&#xe613;" ToolTip="删除" Style="{StaticResource btnFIcon}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Loaded">
+                        <helper:ExInvokeCommandAction Command="{Binding DataGridLoadedCommand}" CommandParameter="{Binding ElementName=dgvControlPads}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="BeginningEdit">
+                        <helper:ExInvokeCommandAction Command="{Binding BeginningEditCommand}" CommandParameter="{Binding ElementName=dgvControlPads}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="CellEditEnding">
+                        <helper:ExInvokeCommandAction Command="{Binding CellEditEndingCommand}" CommandParameter="{Binding ElementName=dgvControlPads}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="RowEditEnding">
+                        <helper:ExInvokeCommandAction Command="{Binding RowEditEndingCommand}" CommandParameter="{Binding ElementName=dgvControlPads}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </DataGrid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

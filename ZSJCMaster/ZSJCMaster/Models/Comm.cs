@@ -234,7 +234,7 @@ namespace ZSJCMaster.Models
         public int CurrentNetPort { get; set; }
         public AlarmInfo[] AlarmInfos { get; set; }
 
-        public class AlarmInfo
+        public class AlarmInfo:BindableBase
         {
             public int cameraNo { get; set; }
             public int x { get; set; }

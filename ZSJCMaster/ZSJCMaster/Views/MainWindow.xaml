@@ -17,6 +17,11 @@
                 <mui:Link Source="Pages\MainPage.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
+        <mui:LinkGroup DisplayName="实时报警">
+            <mui:LinkGroup.Links >
+                <mui:Link Source="Pages\AlarmPage.xaml"/>
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
         <mui:LinkGroup DisplayName="记录查询">
             <mui:LinkGroup.Links>
                 <mui:Link Source="Pages\RecordPage.xaml"/>
