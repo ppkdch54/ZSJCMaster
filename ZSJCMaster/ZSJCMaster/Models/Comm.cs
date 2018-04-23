@@ -4,6 +4,7 @@ using System.IO.Ports;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Threading;
 using ZSJCMaster.Helpers;
 
 namespace ZSJCMaster.Models
@@ -125,19 +126,33 @@ namespace ZSJCMaster.Models
     {
         TcpClient client;
         NetworkStream ns;
+        TcpListener server;
+        string ip;
+        int port;
+        //public delegate void TcpRecvMethod();
+
         public TcpComm() { }
         public TcpComm(string ip, int port)
         {
             client = new TcpClient(ip, port);
             ns = client.GetStream();
-
+            IPAddress localAddr = IPAddress.Parse(ip);
+            server = new TcpListener(localAddr, port);
+            Thread t1 = new Thread(new ThreadStart(RecData));
+            t1.IsBackground = true;
+            t1.Start();
         }
 
         ~TcpComm()
         {
-            ns.Close();
-            client.Close();
-        }
+            if (ns!=null)
+            {
+                ns.Close();
+            }
+            if (client!=null)
+            {
+                client.Close();
+            }        }
         /// <summary>
         /// 发送数据
         /// </summary>
@@ -149,14 +164,8 @@ namespace ZSJCMaster.Models
 
         public void RecData()
         {
-            TcpListener server = null;
             try
             {
-                // Set the TcpListener on port 13000.  
-                Int32 port = 13000;
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-                server = new TcpListener(localAddr, port);
-                // Start listening for client requests.  
                 server.Start();
                 // Buffer for reading data  
                 Byte[] bytes = new Byte[256];
@@ -174,14 +183,8 @@ namespace ZSJCMaster.Models
                     // Loop to receive all the data sent by the client.  
                     while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
-                        // Translate data bytes to a ASCII string.  
-                        data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        Console.WriteLine("Received: {0}", data);
-                        // Process the data sent by the client.  
-                        
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-                        // Send back a response.  
-                        stream.Write(msg, 0, msg.Length);
+                        //byte[] information analysis
+                        Decode(bytes);
                     }
                     // Shutdown and end connection  
                     client.Close();
@@ -197,6 +200,46 @@ namespace ZSJCMaster.Models
                 server.Stop();
             }
 
+        }
+
+        private void Decode(byte[] bytes)
+        {
+            //包长度30
+            if (bytes.Length==30)
+            {
+                if (bytes[0]==0x87 && bytes[29]==0x0a)
+                {
+                    //警报标志位
+                    for (int i = 0; i < 5; i++)
+                    {
+                        AlarmFlags[i] = (bytes[i+1] == 1);
+                    }
+                    
+                    CurrentNetPort = bytes[6];
+                    AlarmInfos = new AlarmInfo[5];
+                    int index = 0;
+                    int offset = 7;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        AlarmInfos[i + index * 4].cameraNo = bytes[i + index * 4 + offset];
+                        AlarmInfos[i + index * 4 + 1].x = bytes[i + index * 4 + 1 + offset];
+                        AlarmInfos[i + index * 4 + 2].y = bytes[i + index * 4 + 2 + offset];
+                        AlarmInfos[i + index * 4 + 3].width = bytes[i + index * 4 + 3 + offset];
+                    }
+                }
+            }
+        }
+
+        public bool[] AlarmFlags { get; set; }
+        public int CurrentNetPort { get; set; }
+        public AlarmInfo[] AlarmInfos { get; set; }
+
+        public class AlarmInfo
+        {
+            public int cameraNo { get; set; }
+            public int x { get; set; }
+            public int y { get; set; }
+            public int width { get; set; }
         }
     }
 

@@ -11,6 +11,9 @@ namespace ZSJCMaster.Models
 {
     public class ControlPad: BindableBase
     {
+        TcpComm tcpComm;
+        byte[] command;
+
         private int id;
 
         /// <summary>
@@ -92,6 +95,10 @@ namespace ZSJCMaster.Models
         public ControlPad()
         {
             //LoadPara();
+            tcpComm = new TcpComm();
+            command = new byte[30];
+            command[0] = 0x87;
+            command[29] = 0x0a;
         }
 
         //public void LoadPara()
@@ -199,6 +206,11 @@ namespace ZSJCMaster.Models
 
         }
 
+        public void SwitchNetPort(int netPort)
+        {
+            command[6]= (byte)netPort;
+            tcpComm.SendData(command);
+        }
 
     }
 }
