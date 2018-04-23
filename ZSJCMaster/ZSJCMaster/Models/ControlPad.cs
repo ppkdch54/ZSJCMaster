@@ -96,9 +96,9 @@ namespace ZSJCMaster.Models
         {
             //LoadPara();
             tcpComm = new TcpComm();
-            command = new byte[30];
+            command = new byte[5];
             command[0] = 0x87;
-            command[29] = 0x0a;
+            command[4] = 0x0a;
         }
 
         //public void LoadPara()
@@ -208,7 +208,8 @@ namespace ZSJCMaster.Models
 
         public void SwitchNetPort(int netPort)
         {
-            command[6]= (byte)netPort;
+
+            command[1]= (byte)(netPort-1);
             tcpComm.SendData(command);
         }
 
