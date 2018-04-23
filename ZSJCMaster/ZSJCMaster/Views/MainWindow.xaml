@@ -4,26 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:helper="clr-namespace:ZSJCMaster.Helpers"
         xmlns:local="clr-namespace:ZSJCMaster.Views"
         mc:Ignorable="d"
         Title="纵撕检测上位机"  IsTitleVisible="True"
-        Height="450" Width="780" WindowStartupLocation="CenterScreen">
+        ContentSource="Pages\MainPage.xaml" x:Name="window"
+        Height="450" Width="780" WindowStartupLocation="CenterScreen" >
     <mui:ModernWindow.MenuLinkGroups>
-        <mui:LinkGroup DisplayName="设备监控" >
+        <mui:LinkGroup DisplayName="设备监控">
             <mui:LinkGroup.Links >
                 <mui:Link Source="Pages\MainPage.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="记录查询">
-
+            <mui:LinkGroup.Links>
+                <mui:Link Source="Pages\RecordPage.xaml"/>
+            </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="系统设置">
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="控制板" />
-                <mui:Link DisplayName="相机" />
-                <mui:Link DisplayName="用户" />
-                <mui:Link DisplayName="报警" />
-                <mui:Link DisplayName="TCP" />
+                <mui:Link Source="Pages\SettingPage.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
     </mui:ModernWindow.MenuLinkGroups>

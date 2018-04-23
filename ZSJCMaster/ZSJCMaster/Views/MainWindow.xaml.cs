@@ -24,6 +24,7 @@ namespace ZSJCMaster.Views
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainWindowViewModel();
         }
     }
 }

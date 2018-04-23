@@ -1,5 +1,8 @@
 ﻿using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using ZSJCMaster.Helpers;
 
 namespace ZSJCMaster.Models
@@ -50,6 +53,21 @@ namespace ZSJCMaster.Models
             {
                 ip = value;
                 this.RaisePropertyChanged("IP");
+            }
+        }
+
+        private int controlPadNo;
+
+        /// <summary>
+        /// 控制板编号
+        /// </summary>
+        public int ControlPadNo
+        {
+            get { return controlPadNo; }
+            set
+            {
+                controlPadNo = value;
+                this.RaisePropertyChanged("ControlPadNo");
             }
         }
 
@@ -109,6 +127,8 @@ namespace ZSJCMaster.Models
             //config.Load("Application.config");
             //No = int.Parse(config.ReadNodeValue("no"));
         }
+
+        
 
         public void SavePara()
         {

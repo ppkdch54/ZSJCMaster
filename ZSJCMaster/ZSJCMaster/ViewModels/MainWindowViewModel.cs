@@ -1,42 +1,36 @@
-﻿using Prism.Mvvm;
+﻿using Prism.Commands;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Xml.Linq;
+using ZSJCMaster.Helpers;
 using ZSJCMaster.Models;
 
 namespace ZSJCMaster.ViewModels
 {
     class MainWindowViewModel: BindableBase
     {
-        private ControlPad controlPad;
+        private ObservableCollection<ControlPad> controlPads;
+
         /// <summary>
-        /// 控制板
+        /// 控制板集合
         /// </summary>
-        public ControlPad ControlPad
+        public ObservableCollection<ControlPad> ControlPads
         {
-            get { return controlPad; }
+            get { return controlPads; }
             set
             {
-                controlPad = value;
-                this.RaisePropertyChanged("ControlPad");
+                controlPads = value;
+                this.RaisePropertyChanged("ControlPads");
             }
         }
-
-        public MainWindowViewModel()
-        {
-            this.ControlPad = new ControlPad();
-            ControlPad.Name = "控制板";
-            ControlPad.Cameras = new List<Camera>()
-            {
-                new Camera() { No=1, Name="左相机", IP="192.168.1.102", BeltNo=1, NetPortNum=1, AlarmPicDir="C:\\" },
-                new Camera() { No=2, Name="右相机", IP="192.168.1.102", BeltNo=1, NetPortNum=2, AlarmPicDir="C:\\" },
-                new Camera() { No=2, Name="右相机", IP="192.168.1.102", BeltNo=1, NetPortNum=2, AlarmPicDir="C:\\" },
-                new Camera() { No=2, Name="右相机", IP="192.168.1.102", BeltNo=1, NetPortNum=2, AlarmPicDir="C:\\" },
-            };
-
-        }
-
     }
 }
