@@ -14,17 +14,16 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ZSJCMaster.ViewModels;
 
-namespace ZSJCMaster.Pages
+namespace ZSJCMaster.Contents
 {
     /// <summary>
-    /// Interaction logic for MainPage.xaml
+    /// Interaction logic for ControlPadContent.xaml
     /// </summary>
-    public partial class MainPage : UserControl
+    public partial class ControlPadContent : UserControl
     {
-        public MainPage()
+        public ControlPadContent()
         {
             InitializeComponent();
-            this.DataContext = new MainPageViewModel();
         }
     }
 }

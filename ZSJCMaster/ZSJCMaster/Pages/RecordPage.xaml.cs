@@ -12,19 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ZSJCMaster.ViewModels;
 
 namespace ZSJCMaster.Pages
 {
     /// <summary>
-    /// Interaction logic for MainPage.xaml
+    /// Interaction logic for RecordPage.xaml
     /// </summary>
-    public partial class MainPage : UserControl
+    public partial class RecordPage : UserControl
     {
-        public MainPage()
+        public RecordPage()
         {
             InitializeComponent();
-            this.DataContext = new MainPageViewModel();
         }
     }
 }

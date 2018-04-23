@@ -17,14 +17,14 @@ using ZSJCMaster.ViewModels;
 namespace ZSJCMaster.Pages
 {
     /// <summary>
-    /// Interaction logic for MainPage.xaml
+    /// Interaction logic for SettingPage.xaml
     /// </summary>
-    public partial class MainPage : UserControl
+    public partial class SettingPage : UserControl
     {
-        public MainPage()
+        public SettingPage()
         {
             InitializeComponent();
-            this.DataContext = new MainPageViewModel();
+            this.DataContext = new SettingPageViewModel();
         }
     }
 }
