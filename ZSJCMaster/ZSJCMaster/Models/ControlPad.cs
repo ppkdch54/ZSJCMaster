@@ -109,6 +109,8 @@ namespace ZSJCMaster.Models
             command = new byte[5];
             command[0] = 0x87;
             command[4] = 0x0a;
+            tcpComm.SendData(new byte[] {0x00 });
+            //SwitchNetPort(1);
         }
 
         public void LoadPara()
