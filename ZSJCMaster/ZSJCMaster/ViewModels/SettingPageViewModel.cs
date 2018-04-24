@@ -58,70 +58,16 @@ namespace ZSJCMaster.ViewModels
 
         public void CellEditEnding(ExCommandParameter param)
         {
-            //该方法有问题，建议使用WPF验证机制
             if (this.currentControlPad == null) { return; }
             var sender = param.Sender as DataGrid;
             var args = param.EventArgs as DataGridCellEditEndingEventArgs;
+            
             int index = args.Column.DisplayIndex;
             var content = (args.Column.GetCellContent(args.Row) as TextBox).Text;
             int id = int.Parse((sender.Columns[0].GetCellContent(args.Row) as TextBlock).Text);
             var pad = this.ControlPads.SingleOrDefault(p => p.Id == id);
-            
-            string header = sender.Columns[index].Header.ToString();
-            if (string.IsNullOrEmpty(content))
-            {      
-                switch (header)
-                {
-                    case "Name":
-                        args.Column.SetCurrentValue(TextBox.TextProperty,currentControlPad.Name);
-                        break;
-                    case "IP":
-                        args.Column.SetCurrentValue(TextBox.TextProperty,currentControlPad.IP);
-                        break;
-                    case "PortNum":
-                        args.Column.SetCurrentValue(TextBox.TextProperty, currentControlPad.PortNum);
-                        break;
-                    default:
-                        args.Column.SetCurrentValue(TextBox.TextProperty,"");
-                        break;
-                }
-                return;
-            }
-            if(header == "PortNum")
-            {
-                int port = 0;
-                bool b = int.TryParse(content, out port);
-                if (b)
-                {
-                    if(port > 0 && port <= 65535)
-                    {
-                        args.Column.SetCurrentValue(TextBox.TextProperty, port);
-                    }else
-                    {
-                        args.Column.SetCurrentValue(TextBox.TextProperty, currentControlPad.PortNum);
-                    }
-                }else
-                {
-                    args.Column.SetCurrentValue(TextBox.TextProperty, currentControlPad.PortNum);
-                }
-                
-                return;
-            }
-            if(header == "IP")
-            {
-                string pattern = @"^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$";
-                if(Regex.IsMatch(content,pattern))
-                {
-                    args.Column.SetCurrentValue(TextBox.TextProperty, content);
-                    
-                }else
-                {
-                    pad.IP = currentControlPad.IP;
-                    args.Column.SetCurrentValue(TextBox.TextProperty, currentControlPad.IP);
-                }
-                return;
-            }
-
+            //保存
+            ControlPad.UpdateControlPad(pad);
         }
 
         private void RowEditEnding(ExCommandParameter param)

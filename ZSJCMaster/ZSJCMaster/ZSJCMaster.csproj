@@ -109,6 +109,9 @@
     <Compile Include="Pages\SettingPage.xaml.cs">
       <DependentUpon>SettingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Validations\IPv4Rule.cs" />
+    <Compile Include="Validations\PortRule.cs" />
+    <Compile Include="Validations\RequiredRule.cs" />
     <Compile Include="ViewModels\AlarmPageViewModel.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

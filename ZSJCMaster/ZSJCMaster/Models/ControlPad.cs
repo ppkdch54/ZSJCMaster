@@ -64,6 +64,7 @@ namespace ZSJCMaster.Models
         /// <summary>
         /// 控制板TCP端口
         /// </summary>
+        
         public int PortNum
         {
             get { return portNum; }
@@ -111,8 +112,8 @@ namespace ZSJCMaster.Models
         public ControlPad()
         {
             LoadPara();
-            tcpComm = new TcpComm(IP,PortNum);
-            tcpComm.TcpRecv = (AlarmInfo[] info,bool[] flags) => 
+            tcpComm = new TcpComm(IP, PortNum);
+            tcpComm.TcpRecv = (AlarmInfo[] info, bool[] flags) =>
             {
                 for (int i = 0; i < flags.Length; i++)
                 {
@@ -209,7 +210,22 @@ namespace ZSJCMaster.Models
             //save
             doc.Save("Application.config");
         }
-
+        public static void UpdateControlPad(ControlPad pad)
+        {
+            XDocument doc = XDocument.Load("Application.config");
+            //找到controlpads节点
+            var controlpads = doc.Descendants("controlpads").SingleOrDefault();
+            if (controlpads == null) { return; }
+            var existPad = controlpads.Descendants("controlpad").
+                SingleOrDefault(p => p.Attribute("id").Value == pad.Id.ToString());
+            if (existPad == null) { return; }
+            existPad.SetAttributeValue("name",pad.Name);
+            existPad.SetAttributeValue("ip",pad.IP);
+            existPad.SetAttributeValue("port",pad.PortNum);
+            //save
+            
+            doc.Save("Application.config");
+        }
         public void SavePara()
         {
 
