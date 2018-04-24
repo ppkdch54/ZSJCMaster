@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZSJCMaster", "ZSJCMaster\ZSJCMaster.csproj", "{C0C60B40-C1A0-4A96-A5D9-DEE0B7E0FE7E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteDesktopDemo", "RemoteDesktopDemo\RemoteDesktopDemo.csproj", "{58F4046A-5BA1-4F5F-80AA-3FD868376235}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTCPTest", "..\..\..\..\Documents\Tencent Files\332992179\FileRecv\SimpleTCPTest\SimpleTCPTest\SimpleTCPTest.csproj", "{6A2B6181-7B55-42B2-A785-34832C82BABB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{58F4046A-5BA1-4F5F-80AA-3FD868376235}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58F4046A-5BA1-4F5F-80AA-3FD868376235}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58F4046A-5BA1-4F5F-80AA-3FD868376235}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A2B6181-7B55-42B2-A785-34832C82BABB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A2B6181-7B55-42B2-A785-34832C82BABB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A2B6181-7B55-42B2-A785-34832C82BABB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A2B6181-7B55-42B2-A785-34832C82BABB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

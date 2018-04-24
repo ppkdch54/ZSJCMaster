@@ -1,4 +1,5 @@
 ﻿using Prism.Mvvm;
+using SimpleTCP;
 using System;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
@@ -128,9 +129,7 @@ namespace ZSJCMaster.Models
 
     public class TcpComm : BindableBase
     {
-        TcpClient client;
-        NetworkStream ns;
-        TcpListener server;
+        SimpleTcpClient simpleTcp;
         string ip;
         int port;
 
@@ -147,113 +146,71 @@ namespace ZSJCMaster.Models
         public TcpComm() { }
         public TcpComm(string ip, int port)
         {
-            client = new TcpClient(ip, port);
-            ns = client.GetStream();
-            IPAddress localAddr = IPAddress.Parse(ip);
-            server = new TcpListener(localAddr, port);
-            Thread t1 = new Thread(new ThreadStart(RecData));
-            t1.IsBackground = true;
-            t1.Start();
+            AlarmFlags = new bool[5];
+
+            this.ip = ip;
+            this.port = port;
+            simpleTcp = new SimpleTcpClient().Connect(ip, port);
+            simpleTcp.DataReceived += (sender, msg) =>
+            {
+                Decode(msg.Data);
+            };
         }
 
         ~TcpComm()
         {
-            if (ns!=null)
-            {
-                ns.Close();
-            }
-            if (client!=null)
-            {
-                client.Close();
-            }        }
+            simpleTcp.Disconnect();
+            simpleTcp.Dispose();
+        }
         /// <summary>
         /// 发送数据
         /// </summary>
         /// <param name="data">要发送的数据</param>
         public void SendData(byte[] data)
         {
-            ns.Write(data, 0, data.Length);
+            simpleTcp.Write(data);
         }
 
-        public void RecData()
-        {
-            try
-            {
-                server.Start();
-                // Buffer for reading data  
-                Byte[] bytes = new Byte[256];
-                String data = null;
-                // Enter the listening loop.  
-                while (true)
-                {
-                    // Perform a blocking call to accept requests.  
-                    // You could also user server.AcceptSocket() here.  
-                    TcpClient client = server.AcceptTcpClient();
-                    data = null;
-                    // Get a stream object for reading and writing  
-                    NetworkStream stream = client.GetStream();
-                    int i;
-                    // Loop to receive all the data sent by the client.  
-                    while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                    {
-                        //byte[] information analysis
-                        Decode(bytes);
-
-                    }
-                    // Shutdown and end connection  
-                    client.Close();
-                }
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
-            }
-            finally
-            {
-                // Stop listening for new clients.  
-                server.Stop();
-            }
-
-        }
 
         private void Decode(byte[] bytes)
         {
-            //包长度30
-            if (bytes.Length==30)
+            for (int i = 0; i < bytes.Length; i++)
             {
-                if (bytes[0]==0x87 && bytes[29]==0x0a)
+                if( bytes[i]==0x87)
                 {
-                    //警报标志位
-                    for (int i = 0; i < 5; i++)
+                    if (bytes[i+29] == 0x0a)
                     {
-                        AlarmFlags[i] = (bytes[i+1] == 1);
-                    }
-                    
-                    CurrentNetPort = bytes[6];
-                    AlarmInfos = new AlarmInfo[5];
-                    int index = 0;
-                    int offset = 7;
-                    for (int i = 0; i < 5; i++)
-                    {
-                        AlarmInfos[i + index * 4].cameraNo = bytes[i + index * 4 + offset];
-                        AlarmInfos[i + index * 4 + 1].x = bytes[i + index * 4 + 1 + offset];
-                        AlarmInfos[i + index * 4 + 2].y = bytes[i + index * 4 + 2 + offset];
-                        AlarmInfos[i + index * 4 + 3].width = bytes[i + index * 4 + 3 + offset];
-                    }
-                    if (this.TcpRecv != null)
-                    {
-                        this.TcpRecv(AlarmInfos,AlarmFlags);
+                        //警报标志位
+                        for (int j = 0; j < 5; j++)
+                        {
+                            AlarmFlags[j] = (bytes[j + 1] == 1);
+                        }
+                        CurrentNetPort = bytes[6+i];
+                        AlarmInfos = new AlarmInfo[5];
+                        int index = 0;
+                        int offset = 7+i;
+                        for (int k = 0; k < 5; k++)
+                        {
+                            AlarmInfos[k] = new AlarmInfo();
+                            AlarmInfos[k].cameraNo = bytes[k + index * 4 + offset];
+                            AlarmInfos[k].x = bytes[k + index * 4 + 1 + offset];
+                            AlarmInfos[k].y = bytes[k + index * 4 + 2 + offset];
+                            AlarmInfos[k].width = bytes[k + index * 4 + 3 + offset];
+                        }
+                        if (this.TcpRecv != null)
+                        {
+                            this.TcpRecv(AlarmInfos, AlarmFlags);
+                        }
+
                     }
                 }
             }
+                
         }
 
         public bool[] AlarmFlags { get; set; }
         public int CurrentNetPort { get; set; }
         public AlarmInfo[] AlarmInfos { get; set; }
-
-
-        
     }
 
     public class AlarmInfo : BindableBase
