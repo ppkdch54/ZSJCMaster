@@ -112,6 +112,7 @@ namespace ZSJCMaster.Models
         {
             LoadPara();
             tcpComm = new TcpComm(IP,PortNum);
+            AlarmInfos = new ObservableCollection<AlarmInfo>();
             tcpComm.TcpRecv = (AlarmInfo[] info,bool[] flags) => 
             {
                 for (int i = 0; i < flags.Length; i++)
