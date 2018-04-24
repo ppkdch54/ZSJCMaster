@@ -13,6 +13,7 @@ namespace ZSJCMaster.Models
     {
         TcpComm tcpComm;
         byte[] command;
+        TcpRecvDelegate tcpRecv;
 
         private int id;
 
@@ -91,36 +92,18 @@ namespace ZSJCMaster.Models
             }
         }
 
-        private ObservableCollection<AlarmInfo> alarmInfos;
-
-        /// <summary>
-        /// 报警信息集合
-        /// </summary>
-        public ObservableCollection<AlarmInfo> AlarmInfos
-        {
-            get { return alarmInfos; }
-            set
-            {
-                alarmInfos = value;
-                this.RaisePropertyChanged("AlarmInfos");
-            }
-        }
-
-
+        public ControlPad() { }
         //构造函数,打开串口
-        public ControlPad()
+        public ControlPad(TcpRecvDelegate tcpRecv)
         {
+            this.tcpRecv = tcpRecv;
             LoadPara();
             tcpComm = new TcpComm(IP,PortNum);
-            AlarmInfos = new ObservableCollection<AlarmInfo>();
             tcpComm.TcpRecv = (AlarmInfo[] info,bool[] flags) => 
             {
-                for (int i = 0; i < flags.Length; i++)
+                if(this.tcpRecv != null)
                 {
-                    if (flags[i])
-                    {
-                        AlarmInfos.Add(info[i]);
-                    }
+                    this.tcpRecv(info, flags);
                 }
             };
             command = new byte[5];

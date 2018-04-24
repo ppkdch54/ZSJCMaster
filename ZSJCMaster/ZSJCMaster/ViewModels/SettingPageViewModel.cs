@@ -67,7 +67,7 @@ namespace ZSJCMaster.ViewModels
             int id = int.Parse((sender.Columns[0].GetCellContent(args.Row) as TextBlock).Text);
             var pad = this.ControlPads.SingleOrDefault(p => p.Id == id);
             //保存
-            ControlPad.UpdateControlPad(pad);
+            //ControlPad.UpdateControlPad(pad);
         }
 
         private void RowEditEnding(ExCommandParameter param)

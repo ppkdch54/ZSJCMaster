@@ -11,6 +11,21 @@ namespace ZSJCMaster.ViewModels
 {
     class AlarmPageViewModel:MainWindowViewModel
     {
+        private AlarmInfo currentItem;
+
+        /// <summary>
+        /// 表格当前项
+        /// </summary>
+        public AlarmInfo CurrentItem
+        {
+            get { return currentItem; }
+            set
+            {
+                currentItem = value;
+                this.RaisePropertyChanged("CurrentItem");
+            }
+        }
+
         private ObservableCollection<AlarmInfo> alarmInfos;
 
         /// <summary>
@@ -29,10 +44,23 @@ namespace ZSJCMaster.ViewModels
         public AlarmPageViewModel()
         {
             this.AlarmInfos = new ObservableCollection<AlarmInfo>();
+            ControlPad pad = new ControlPad((AlarmInfo[] info,bool[] flags)=> 
+            {
+                App.Current.Dispatcher.Invoke(()=> 
+                {
+                    for (int i = 0; i < flags.Length; i++)
+                    {
+                        if (flags[i])
+                        {
+                            AlarmInfos.Add(info[i]);
+                            CurrentItem = info[i];
+                        }
+                    }
+                });
+                
+            });
             
-            ControlPad pad = new ControlPad();
             
-            this.AlarmInfos = pad.AlarmInfos;
         }
 
     }

@@ -18,21 +18,12 @@
         <ScrollViewer VerticalAlignment="Stretch" Margin="-10 -40 0 0">
             <DataGrid x:Name="dgvControlPads" Grid.Row="1" Margin="0 10" 
                       ItemsSource="{Binding AlarmInfos}" AutoGenerateColumns="False" 
-                      CanUserAddRows="False" SelectionMode="Single">
+                      CanUserAddRows="False" SelectionMode="Single" SelectedItem="{Binding CurrentItem}">
                 <DataGrid.Columns>
                     <mui:DataGridTextColumn Width="30" Binding="{Binding Id}" IsReadOnly="True" ElementStyle="{StaticResource contentCenterStyle}"/>
                     <mui:DataGridTextColumn Header="相机" Width="140" Binding="{Binding cameraNo}" ElementStyle="{StaticResource contentCenterStyle}"/>
                     <mui:DataGridTextColumn Header="X坐标" Width="140" Binding="{Binding x}" ElementStyle="{StaticResource contentCenterStyle}"/>
                     <mui:DataGridTextColumn Header="Y坐标" Binding="{Binding y}" ElementStyle="{StaticResource contentCenterStyle}"/>
-                    <DataGridTemplateColumn>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button x:Name="btnDeleteControlPad" Tag="{Binding Id}" Content="&#xe613;" ToolTip="删除" Style="{StaticResource btnFIcon}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Loaded">
