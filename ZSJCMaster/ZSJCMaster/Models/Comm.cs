@@ -18,6 +18,7 @@ namespace ZSJCMaster.Models
         System.IO.Ports.Parity parity;
         int dataBits;
         StopBits stopBits;
+        
 
         public string PortName
         {
@@ -78,8 +79,14 @@ namespace ZSJCMaster.Models
 
         public void InitialSerial()
         {
-            serial = new SerialPort(PortName, BaudRate, Parity, DataBits, StopBits);
+            NewMethod();
             serial.ReceivedBytesThreshold = 4;//设置 DataReceived 事件发生前内部输入缓冲区中的字节数
+            Open();
+        }
+
+        private void NewMethod()
+        {
+            serial = new SerialPort(PortName, BaudRate, Parity, DataBits, StopBits);
         }
 
         ~SerialComm()
@@ -100,16 +107,16 @@ namespace ZSJCMaster.Models
 
         public void Open()
         {
-            if (!serial.IsOpen)
-            {
+            //if (!serial.IsOpen)
+           // {
                 serial.Open();
-            }
+           // }
 
         }
 
         public void SendData(Byte[] data)
         {
-            Open();
+            
             serial.Write(data, 0, data.Length);
         }
 
@@ -129,6 +136,7 @@ namespace ZSJCMaster.Models
 
     public class TcpComm : BindableBase
     {
+        AlarmLamp alarmLamp;
         SimpleTcpClient simpleTcp;
         string ip;
         int port;
@@ -146,6 +154,7 @@ namespace ZSJCMaster.Models
         public TcpComm() { }
         public TcpComm(string ip, int port)
         {
+            alarmLamp = new AlarmLamp();
             AlarmFlags = new bool[5];
 
             this.ip = ip;
@@ -176,19 +185,19 @@ namespace ZSJCMaster.Models
         {
             for (int i = 0; i < bytes.Length; i++)
             {
-                if( bytes[i]==0x87)
+                if (bytes[i] == 0x87)
                 {
-                    if (bytes[i+29] == 0x0a)
+                    if (bytes[i + 29] == 0x0a)
                     {
                         //警报标志位
                         for (int j = 0; j < 5; j++)
                         {
                             AlarmFlags[j] = (bytes[j + 1] == 1);
                         }
-                        CurrentNetPort = bytes[6+i];
+                        CurrentNetPort = bytes[6 + i];
                         AlarmInfos = new AlarmInfo[5];
                         int index = 0;
-                        int offset = 7+i;
+                        int offset = 7 + i;
                         for (int k = 0; k < 5; k++)
                         {
                             AlarmInfos[k] = new AlarmInfo();
@@ -205,7 +214,21 @@ namespace ZSJCMaster.Models
                     }
                 }
             }
-                
+            bool alarm = false;
+            foreach (var alarmFlag in AlarmFlags)
+            {
+                if (alarmFlag)
+                {
+                    alarm = true;
+                }
+            }
+            if (alarm)
+            {
+                alarmLamp.AlarmMusicAndFlash();
+                Thread.Sleep(2000);
+                alarmLamp.StopAllAlarm();
+            }
+            SendData(new byte[] { 0x00 });
         }
 
         public bool[] AlarmFlags { get; set; }
