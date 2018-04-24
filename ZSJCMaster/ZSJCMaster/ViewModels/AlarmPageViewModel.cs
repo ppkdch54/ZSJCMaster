@@ -29,7 +29,9 @@ namespace ZSJCMaster.ViewModels
         public AlarmPageViewModel()
         {
             this.AlarmInfos = new ObservableCollection<AlarmInfo>();
+            
             ControlPad pad = new ControlPad();
+            
             this.AlarmInfos = pad.AlarmInfos;
         }
 

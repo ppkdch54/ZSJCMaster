@@ -6,6 +6,7 @@
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:helper="clr-namespace:ZSJCMaster.Helpers"
+             xmlns:validation="clr-namespace:ZSJCMaster.Validations"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="500">
     <UserControl.Resources>
@@ -29,6 +30,13 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <Grid Style="{StaticResource ContentRoot}">
@@ -67,9 +75,39 @@
                       CanUserAddRows="False" SelectionMode="Single">
                 <DataGrid.Columns>
                     <mui:DataGridTextColumn Width="30" Binding="{Binding Id}" IsReadOnly="True" ElementStyle="{StaticResource contentCenterStyle}"/>
-                    <mui:DataGridTextColumn Header="名称" Width="140" Binding="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource contentCenterStyle}"/>
-                    <mui:DataGridTextColumn Header="IP" Width="140" Binding="{Binding IP,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource contentCenterStyle}"/>
-                    <mui:DataGridTextColumn Header="TCP端口" Binding="{Binding PortNum,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <mui:DataGridTextColumn Header="名称" Width="140" ElementStyle="{StaticResource contentCenterStyle}">
+                        <mui:DataGridTextColumn.Binding>
+                            <Binding Path="Name" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule></ExceptionValidationRule>
+                                    <validation:RequiredRule></validation:RequiredRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </mui:DataGridTextColumn.Binding>
+                    </mui:DataGridTextColumn>
+                    <mui:DataGridTextColumn Header="IP" Width="140" ElementStyle="{StaticResource contentCenterStyle}">
+                        <mui:DataGridTextColumn.Binding>
+                            <Binding Path="IP" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule></ExceptionValidationRule>
+                                    <validation:RequiredRule></validation:RequiredRule>
+                                    <validation:IPv4Rule></validation:IPv4Rule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </mui:DataGridTextColumn.Binding>
+                    </mui:DataGridTextColumn>
+                    
+                    <mui:DataGridTextColumn Header="TCP端口" ElementStyle="{StaticResource contentCenterStyle}">
+                                <mui:DataGridTextColumn.Binding>
+                                    <Binding Path="PortNum" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <ExceptionValidationRule></ExceptionValidationRule>
+                                            <validation:RequiredRule></validation:RequiredRule>
+                                            <validation:PortRule></validation:PortRule>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </mui:DataGridTextColumn.Binding>
+                            </mui:DataGridTextColumn>
                     <DataGridTemplateColumn>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
