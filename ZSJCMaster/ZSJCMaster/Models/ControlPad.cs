@@ -95,6 +95,11 @@ namespace ZSJCMaster.Models
         }
 
         public ControlPad() { }
+        public ControlPad(int conrolpadId)
+        {
+            LoadPara(conrolpadId);
+            tcpComm = new TcpComm(IP, PortNum);
+        }
         //构造函数,打开串口
         public ControlPad(TcpRecvDelegate tcpRecv)
         {
@@ -115,10 +120,12 @@ namespace ZSJCMaster.Models
             //SwitchNetPort(1);
         }
 
-        public void LoadPara()
+        public void LoadPara(int padId = 1)
         {
             XDocument doc = XDocument.Load("Application.config");
-            var controlpad = doc.Descendants("controlpad").SingleOrDefault();
+            var controlpads = doc.Descendants("controlpads").SingleOrDefault();
+            if (controlpads == null) { return; }
+            var controlpad = controlpads.Descendants("controlpad").SingleOrDefault(p=>p.Attribute("id").Value == padId.ToString());
             if (controlpad == null) { return; }
             this.Id = int.Parse(controlpad.Attribute("id").Value);
             this.Name = controlpad.Attribute("name").Value;
