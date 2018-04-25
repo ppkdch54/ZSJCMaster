@@ -150,6 +150,7 @@ namespace ZSJCMaster.Models
                     IP = props.SingleOrDefault(p => p.Name == "ip").Value,
                     BeltNo = int.Parse(props.SingleOrDefault(p => p.Name == "beltNo").Value),
                     NetPortNum = int.Parse(props.SingleOrDefault(p => p.Name == "netPortNum").Value),
+                    ControlPadNo = int.Parse(props.SingleOrDefault(p=>p.Name == "controlPadNo").Value),
                     AlarmPicDir = props.SingleOrDefault(p => p.Name == "alarmPicDir").Value
                 };
                 list.Add(camera);

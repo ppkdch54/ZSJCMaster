@@ -37,7 +37,8 @@ namespace ZSJCMaster.ViewModels
         public DelegateCommand<ExCommandParameter> PageLoadedCommand { get; set; }
         public DelegateCommand<ExCommandParameter> ComboBoxSelectChangedCommand { get; set; }
         public DelegateCommand<ExCommandParameter> TreeViewSelectChangedCommand { get; set; }
-        public DelegateCommand RemoteDesktopCommand { get; set; }
+        public DelegateCommand<ExCommandParameter> ListBoxSelectChangedCommand { get; set; }
+        public DelegateCommand<ExCommandParameter> RemoteDesktopCommand { get; set; }
         #endregion
         //RoutedPropertyChangedEventArgs<object>
         #region command functions
@@ -75,6 +76,10 @@ namespace ZSJCMaster.ViewModels
                 {
                     //只有在选中相机并单击右键时，才显示快捷菜单
                     if (sender.SelectedItem == null) { return; }
+                    //切换网口
+                    var camera = sender.SelectedItem as Camera;
+                    SwitchCameraNetPort(camera);
+                    //显示右键菜单
                     var contextMenu = new ContextMenu();
                     contextMenu.Items.Add(new MenuItem { Header = "连接", Command = this.RemoteDesktopCommand });
                     contextMenu.Items.Add(new MenuItem { Header = "开启检测" });
@@ -84,10 +89,30 @@ namespace ZSJCMaster.ViewModels
 
         }
 
-        private void RemoteDesktop()
+        private void ListBoxSelectChanged(ExCommandParameter param)
+        {
+            var sender = param.Sender as ListBox;
+            var args = param.EventArgs as SelectionChangedEventArgs;
+            var camera = sender.SelectedItem as Camera;
+            SwitchCameraNetPort(camera);
+        }
+
+        /// <summary>
+        /// 切换相机网口
+        /// </summary>
+        /// <param name="camera"></param>
+        private void SwitchCameraNetPort(Camera camera)
+        {
+            int no = camera.No;
+            var controlpad = this.ControlPads.Single(p => p.Id == camera.ControlPadNo);
+            controlpad.SwitchNetPort(no);
+        }
+
+        private void RemoteDesktop(ExCommandParameter param)
         {
             try
             {
+                //启动远程桌面
                 Process p = Process.Start("mstsc.exe");
                 p.WaitForExit();//关键，等待外部程序退出后才能往下执行
             }
@@ -104,7 +129,8 @@ namespace ZSJCMaster.ViewModels
             this.PageLoadedCommand = new DelegateCommand<ExCommandParameter>(PageLoaded);
             this.ComboBoxSelectChangedCommand = new DelegateCommand<ExCommandParameter>(ComboBoxSelectChanged);
             this.TreeViewSelectChangedCommand = new DelegateCommand<ExCommandParameter>(TreeViewSelectChanged);
-            this.RemoteDesktopCommand = new DelegateCommand(RemoteDesktop);
+            this.ListBoxSelectChangedCommand = new DelegateCommand<ExCommandParameter>(ListBoxSelectChanged);
+            this.RemoteDesktopCommand = new DelegateCommand<ExCommandParameter>(RemoteDesktop);
         }
     }
 }
