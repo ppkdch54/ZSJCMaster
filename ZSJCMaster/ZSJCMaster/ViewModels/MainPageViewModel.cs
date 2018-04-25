@@ -104,8 +104,8 @@ namespace ZSJCMaster.ViewModels
         private void SwitchCameraNetPort(Camera camera)
         {
             int no = camera.No;
-            var controlpad = this.ControlPads.Single(p => p.Id == camera.ControlPadNo);
-            controlpad.SwitchNetPort(no);
+            ControlPad pad = new ControlPad(camera.ControlPadNo);
+            pad.SwitchNetPort(no);
         }
 
         private void RemoteDesktop(ExCommandParameter param)
