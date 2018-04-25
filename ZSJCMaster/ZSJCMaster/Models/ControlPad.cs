@@ -214,23 +214,26 @@ namespace ZSJCMaster.Models
             doc.Save("Application.config");
         }
 
-        public static void DeleteControlPad(int padId)
+        public static bool DeleteControlPad(int padId)
         {
             XDocument doc = XDocument.Load("Application.config");
             //找到controlpads节点
             var controlpads = doc.Descendants("controlpads").SingleOrDefault();
-            if (controlpads == null) { return; }
+            if (controlpads == null) { return false; }
             var controlpad = controlpads.Descendants("controlpad").
                 SingleOrDefault(p => p.Attribute("id").Value == padId.ToString());
             int cameraCount = controlpad.Descendants("camera").Count();
             if(cameraCount > 0)
             {
                 MessageBox.Show("该控制板下存在相机，不能删除!","提示",MessageBoxButton.OK,MessageBoxImage.Warning);
-                return;
+                return false;
             }else
             {
                 controlpad.Remove();
+                doc.Save("Application.config");
+                return true;
             }
+            
         }
 
         public void SavePara()

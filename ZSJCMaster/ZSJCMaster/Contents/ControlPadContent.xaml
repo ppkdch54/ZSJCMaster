@@ -115,7 +115,7 @@
                                     <Button x:Name="btnDeleteControlPad" Tag="{Binding Id}" Content="&#xe613;" ToolTip="删除" Style="{StaticResource btnFIcon}">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="Click">
-                                                <helper:ExInvokeCommandAction Command="{Binding DeleteControlPadCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=2,AncestorType=UserControl}}" CommandParameter="{Binding ElementName=btnDeleteControlPad}"/>
+                                                <helper:ExInvokeCommandAction Command="{Binding DataContext.DeleteControlPadCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=UserControl}}" CommandParameter="{Binding ElementName=btnDeleteControlPad}"/>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </Button>

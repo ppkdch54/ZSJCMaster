@@ -1,5 +1,9 @@
 ﻿using Prism.Commands;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using ZSJCMaster.Helpers;
 using ZSJCMaster.Models;
@@ -57,7 +61,12 @@ namespace ZSJCMaster.ViewModels
             var sender = param.Sender as Button;
             int id = int.Parse(sender.Tag.ToString());
             //删除
-            ControlPad.DeleteControlPad(id);
+            bool b = ControlPad.DeleteControlPad(id);
+            if (b)
+            {
+                this.ControlPads.Remove(this.ControlPads.Single(p => p.Id == id));
+            }
+            
         }
         #endregion command functions
 
