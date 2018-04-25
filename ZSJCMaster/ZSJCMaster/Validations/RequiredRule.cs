@@ -10,6 +10,10 @@ namespace ZSJCMaster.Validations
 {
     class RequiredRule : ValidationRule
     {
+        public RequiredRule()
+        {
+            this.ValidatesOnTargetUpdated = true;
+        }
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             if(value == null)

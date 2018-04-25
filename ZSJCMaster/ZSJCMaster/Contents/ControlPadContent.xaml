@@ -72,7 +72,7 @@
             </StackPanel>
             <DataGrid x:Name="dgvControlPads" Grid.Row="1" Margin="0 10" 
                       ItemsSource="{Binding ControlPads}" AutoGenerateColumns="False" 
-                      CanUserAddRows="False" SelectionMode="Single">
+                      CanUserAddRows="False" SelectionMode="Single" >
                 <DataGrid.Columns>
                     <mui:DataGridTextColumn Width="30" Binding="{Binding Id}" IsReadOnly="True" ElementStyle="{StaticResource contentCenterStyle}"/>
                     <mui:DataGridTextColumn Header="名称" Width="140" ElementStyle="{StaticResource contentCenterStyle}">
@@ -90,7 +90,7 @@
                             <Binding Path="IP" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
                                 <Binding.ValidationRules>
                                     <ExceptionValidationRule></ExceptionValidationRule>
-                                    <validation:RequiredRule></validation:RequiredRule>
+                                    <validation:RequiredRule ></validation:RequiredRule>
                                     <validation:IPv4Rule></validation:IPv4Rule>
                                 </Binding.ValidationRules>
                             </Binding>
@@ -112,21 +112,21 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button x:Name="btnDeleteControlPad" Tag="{Binding Id}" Content="&#xe613;" ToolTip="删除" Style="{StaticResource btnFIcon}"/>
+                                    <Button x:Name="btnDeleteControlPad" Tag="{Binding Id}" Content="&#xe613;" ToolTip="删除" Style="{StaticResource btnFIcon}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <helper:ExInvokeCommandAction Command="{Binding DeleteControlPadCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=2,AncestorType=UserControl}}" CommandParameter="{Binding ElementName=btnDeleteControlPad}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Loaded">
-                        <helper:ExInvokeCommandAction Command="{Binding DataGridLoadedCommand}" CommandParameter="{Binding ElementName=dgvControlPads}"/>
-                    </i:EventTrigger>
                     <i:EventTrigger EventName="BeginningEdit">
                         <helper:ExInvokeCommandAction Command="{Binding BeginningEditCommand}" CommandParameter="{Binding ElementName=dgvControlPads}"/>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="CellEditEnding">
-                        <helper:ExInvokeCommandAction Command="{Binding CellEditEndingCommand}" CommandParameter="{Binding ElementName=dgvControlPads}"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="RowEditEnding">
                         <helper:ExInvokeCommandAction Command="{Binding RowEditEndingCommand}" CommandParameter="{Binding ElementName=dgvControlPads}"/>

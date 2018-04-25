@@ -6,6 +6,8 @@ using System.Xml.Linq;
 using System.Linq;
 using ZSJCMaster.Helpers;
 using System.Collections.ObjectModel;
+using System.Xml;
+using System.Windows;
 
 namespace ZSJCMaster.Models
 {
@@ -194,6 +196,41 @@ namespace ZSJCMaster.Models
             controlpads.Add(newPad);
             //save
             doc.Save("Application.config");
+        }
+
+        public static void UpdateControlPad(ControlPad pad)
+        {
+            XDocument doc = XDocument.Load("Application.config");
+            //找到controlpads节点
+            var controlpads = doc.Descendants("controlpads").SingleOrDefault();
+            if (controlpads == null) { return; }
+            var controlpad = controlpads.Descendants("controlpad").
+                SingleOrDefault(p => p.Attribute("id").Value == pad.id.ToString());  
+            if (controlpad == null) { return; }
+            controlpad.SetAttributeValue("name",pad.Name);
+            controlpad.SetAttributeValue("ip",pad.IP);
+            controlpad.SetAttributeValue("port", pad.PortNum);
+            //save
+            doc.Save("Application.config");
+        }
+
+        public static void DeleteControlPad(int padId)
+        {
+            XDocument doc = XDocument.Load("Application.config");
+            //找到controlpads节点
+            var controlpads = doc.Descendants("controlpads").SingleOrDefault();
+            if (controlpads == null) { return; }
+            var controlpad = controlpads.Descendants("controlpad").
+                SingleOrDefault(p => p.Attribute("id").Value == padId.ToString());
+            int cameraCount = controlpad.Descendants("camera").Count();
+            if(cameraCount > 0)
+            {
+                MessageBox.Show("该控制板下存在相机，不能删除!","提示",MessageBoxButton.OK,MessageBoxImage.Warning);
+                return;
+            }else
+            {
+                controlpad.Remove();
+            }
         }
 
         public void SavePara()

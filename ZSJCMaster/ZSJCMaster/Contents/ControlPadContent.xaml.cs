@@ -24,6 +24,7 @@ namespace ZSJCMaster.Contents
         public ControlPadContent()
         {
             InitializeComponent();
+            this.DataContext = new ControlPadContentViewModel();
         }
     }
 }

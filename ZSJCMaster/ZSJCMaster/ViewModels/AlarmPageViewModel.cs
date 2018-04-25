@@ -44,6 +44,7 @@ namespace ZSJCMaster.ViewModels
         public AlarmPageViewModel()
         {
             this.AlarmInfos = new ObservableCollection<AlarmInfo>();
+            if(App.Current == null) { return; }
             ControlPad pad = new ControlPad((AlarmInfo[] info,bool[] flags)=> 
             {
                 App.Current.Dispatcher.Invoke(()=> 

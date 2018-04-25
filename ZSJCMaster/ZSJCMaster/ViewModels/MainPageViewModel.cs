@@ -47,6 +47,7 @@ namespace ZSJCMaster.ViewModels
             var tvControlPads = sender.FindName("tvControlPads") as TreeView;
             var cboControlPads = sender.FindName("cboControlPads") as ComboBox;
             this.ControlPads = ControlPad.GetAllControlPads();
+            this.Cameras = null;
         }
         private void ComboBoxSelectChanged(ExCommandParameter param)
         {
