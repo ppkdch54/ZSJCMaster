@@ -136,7 +136,6 @@ namespace ZSJCMaster.Models
 
     public class TcpComm : BindableBase
     {
-        AlarmLamp alarmLamp;
         SimpleTcpClient simpleTcp;
         string ip;
         int port;
@@ -154,16 +153,23 @@ namespace ZSJCMaster.Models
         public TcpComm() { }
         public TcpComm(string ip, int port)
         {
-            alarmLamp = new AlarmLamp();
             AlarmFlags = new bool[5];
 
             this.ip = ip;
             this.port = port;
-            simpleTcp = new SimpleTcpClient().Connect(ip, port);
-            simpleTcp.DataReceived += (sender, msg) =>
+            try
             {
-                Decode(msg.Data);
-            };
+                simpleTcp = new SimpleTcpClient().Connect(ip, port);
+                simpleTcp.DataReceived += (sender, msg) =>
+                {
+                    Decode(msg.Data);
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+
         }
 
         ~TcpComm()
@@ -214,20 +220,6 @@ namespace ZSJCMaster.Models
                     }
                     break;
                 }
-            }
-            bool alarm = false;
-            foreach (var alarmFlag in AlarmFlags)
-            {
-                if (alarmFlag)
-                {
-                    alarm = true;
-                }
-            }
-            if (alarm)
-            {
-                alarmLamp.AlarmMusicAndFlash();
-                Thread.Sleep(2000);
-                alarmLamp.StopAllAlarm();
             }
             SendData(new byte[] { 0x00 });
         }

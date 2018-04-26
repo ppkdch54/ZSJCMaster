@@ -99,7 +99,9 @@ namespace ZSJCMaster.Models
         {
             LoadPara(conrolpadId);
             tcpComm = new TcpComm(IP, PortNum);
-
+            command = new byte[5];
+            command[0] = 0x87;
+            command[4] = 0x0a;
         }
         //构造函数,打开串口
         public ControlPad(TcpRecvDelegate tcpRecv)

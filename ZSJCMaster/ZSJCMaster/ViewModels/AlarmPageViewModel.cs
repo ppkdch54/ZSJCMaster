@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using ZSJCMaster.Models;
 
@@ -12,6 +13,7 @@ namespace ZSJCMaster.ViewModels
     class AlarmPageViewModel:MainWindowViewModel
     {
         private AlarmInfo currentItem;
+        private AlarmLamp alarmLamp;
 
         /// <summary>
         /// 表格当前项
@@ -38,11 +40,18 @@ namespace ZSJCMaster.ViewModels
             {
                 alarmInfos = value;
                 this.RaisePropertyChanged("AlarmInfos");
+                Task.Run(() => {
+                    alarmLamp.AlarmMusicAndFlash();
+                    Thread.Sleep(2000);
+                    alarmLamp.StopAllAlarm();
+                });
+
             }
         }
 
         public AlarmPageViewModel()
         {
+            alarmLamp = new AlarmLamp();
             this.AlarmInfos = new ObservableCollection<AlarmInfo>();
             if(App.Current == null) { return; }
             ControlPad pad = new ControlPad((AlarmInfo[] info,bool[] flags)=> 
@@ -60,7 +69,6 @@ namespace ZSJCMaster.ViewModels
                 });
                 
             });
-            
             
         }
 
