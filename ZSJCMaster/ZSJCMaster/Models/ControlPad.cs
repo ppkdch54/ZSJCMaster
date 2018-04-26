@@ -254,9 +254,12 @@ namespace ZSJCMaster.Models
 
         public void SwitchNetPort(int netPort)
         {
+            if (tcpComm!=null)
+            {
+                command[1] = (byte)(netPort - 1);
+                tcpComm.SendData(command);
+            }
 
-            command[1]= (byte)(netPort-1);
-            tcpComm.SendData(command);
         }
 
     }

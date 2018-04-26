@@ -174,8 +174,12 @@ namespace ZSJCMaster.Models
 
         ~TcpComm()
         {
-            simpleTcp.Disconnect();
-            simpleTcp.Dispose();
+            if (simpleTcp!=null)
+            {
+                simpleTcp.Disconnect();
+                simpleTcp.Dispose();
+            }
+
         }
         /// <summary>
         /// 发送数据
@@ -183,7 +187,11 @@ namespace ZSJCMaster.Models
         /// <param name="data">要发送的数据</param>
         public void SendData(byte[] data)
         {
-            simpleTcp.Write(data);
+            if (simpleTcp!=null)
+            {
+                simpleTcp.Write(data);
+            }
+            
         }
 
 

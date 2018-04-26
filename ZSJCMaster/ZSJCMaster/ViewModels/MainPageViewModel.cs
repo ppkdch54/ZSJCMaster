@@ -19,7 +19,7 @@ namespace ZSJCMaster.ViewModels
     class MainPageViewModel: MainWindowViewModel
     {
         private List<Camera> cameras;
-
+        private Camera camera;
         /// <summary>
         /// 相机集合
         /// </summary>
@@ -76,9 +76,6 @@ namespace ZSJCMaster.ViewModels
                 {
                     //只有在选中相机并单击右键时，才显示快捷菜单
                     if (sender.SelectedItem == null) { return; }
-                    //切换网口
-                    var camera = sender.SelectedItem as Camera;
-                    SwitchCameraNetPort(camera);
                     //显示右键菜单
                     var contextMenu = new ContextMenu();
                     contextMenu.Items.Add(new MenuItem { Header = "连接", Command = this.RemoteDesktopCommand });
@@ -89,12 +86,17 @@ namespace ZSJCMaster.ViewModels
 
         }
 
+        
         private void ListBoxSelectChanged(ExCommandParameter param)
         {
             var sender = param.Sender as ListBox;
             var args = param.EventArgs as SelectionChangedEventArgs;
-            var camera = sender.SelectedItem as Camera;
-            SwitchCameraNetPort(camera);
+            camera = sender.SelectedItem as Camera;
+            if (camera!=null)
+            {
+                SwitchCameraNetPort(camera);
+            }
+            
         }
 
         /// <summary>
