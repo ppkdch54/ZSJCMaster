@@ -167,7 +167,7 @@ namespace ZSJCMaster.Models
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message);
+                throw ex;
             }
 
         }

@@ -108,16 +108,24 @@
                                 <TextBlock Text="网口编号：" FontSize="10"  Margin="10 0 0 0"/>
                                 <TextBlock Text="{Binding NetPortNum}" FontSize="10"/>
                             </StackPanel>
-                            <Button Content="&#xe62a;" Tag="{Binding Id}" ToolTip="连接" Style="{StaticResource btnFIcon}" Grid.RowSpan="2" Grid.Column="2" Command="{Binding DataContext.RemoteDesktopCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=UserControl}}"/>
+                            <Button x:Name="btnConnect" Content="&#xe62a;" Tag="{Binding No}" ToolTip="连接" Style="{StaticResource btnFIcon}" Grid.RowSpan="2" Grid.Column="2" >
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <helper:ExInvokeCommandAction Command="{Binding DataContext.RemoteDesktopCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=UserControl}}" CommandParameter="{Binding ElementName=btnConnect}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
                             <Button Content="&#xe606;" ToolTip="开启检测" Style="{StaticResource btnFIcon}" Grid.RowSpan="2" Grid.Column="3"/>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <!--
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <helper:ExInvokeCommandAction Command="{Binding ListBoxSelectChangedCommand}" CommandParameter="{Binding ElementName=lbCameras}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
+                -->
             </ListBox>
         </Grid>
     </Grid>

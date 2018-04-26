@@ -18,6 +18,7 @@ namespace ZSJCMaster.ViewModels
 {
     class MainPageViewModel: MainWindowViewModel
     {
+        private ControlPad currentPad;  //当前选中的控制板
         private List<Camera> cameras;
         private Camera camera;
         /// <summary>
@@ -68,6 +69,7 @@ namespace ZSJCMaster.ViewModels
                     return;
                 }
                 var pad = sender.SelectedItem as ControlPad;
+                this.currentPad = pad;
                 pad.Cameras = pad.GetCameras(pad.Id);
             }
             else if (sender.SelectedItem is Camera)
@@ -78,7 +80,16 @@ namespace ZSJCMaster.ViewModels
                     if (sender.SelectedItem == null) { return; }
                     //显示右键菜单
                     var contextMenu = new ContextMenu();
-                    contextMenu.Items.Add(new MenuItem { Header = "连接", Command = this.RemoteDesktopCommand });
+                    //contextMenu.Items.Add(new MenuItem { Header = "连接", Command = this.RemoteDesktopCommand });
+                    var menuItem = new MenuItem { Header = "连接" };
+                    menuItem.Name = "menuConnect";
+                    menuItem.Tag = (sender.SelectedItem as Camera).No;
+                    menuItem.Command = this.RemoteDesktopCommand;
+                    var parameter = new ExCommandParameter();
+                    parameter.Sender = menuItem;
+                    menuItem.CommandParameter = parameter;
+                    contextMenu.Items.Add(menuItem);
+
                     contextMenu.Items.Add(new MenuItem { Header = "开启检测" });
                     contextMenu.IsOpen = true;
                 }
@@ -106,14 +117,40 @@ namespace ZSJCMaster.ViewModels
         private void SwitchCameraNetPort(Camera camera)
         {
             int no = camera.No;
-            ControlPad pad = new ControlPad(camera.ControlPadNo);
-            pad.SwitchNetPort(no);
+            try
+            {
+                ControlPad pad = new ControlPad(camera.ControlPadNo);
+                pad.SwitchNetPort(no);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
         }
 
         private void RemoteDesktop(ExCommandParameter param)
         {
             try
-            {
+            {   //先切换网口
+                int no = 0;
+                Camera camera = null;
+                if(param.Sender is Button)
+                {
+                    var sender = param.Sender as Button;
+                    no = int.Parse(sender.Tag.ToString());
+                    camera = this.Cameras.SingleOrDefault(c => c.No == no);
+                }
+                else if(param.Sender is MenuItem)
+                {
+                    var sender = param.Sender as MenuItem;
+                    no = int.Parse(sender.Tag.ToString());
+                    if (this.currentPad == null) { return; }
+                    camera = this.currentPad.Cameras.SingleOrDefault(c => c.No == no);
+                    
+                }
+                if (camera == null) { return; }
+                SwitchCameraNetPort(camera);
                 //启动远程桌面
                 Process p = Process.Start("mstsc.exe");
                 p.WaitForExit();//关键，等待外部程序退出后才能往下执行
