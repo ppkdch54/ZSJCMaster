@@ -241,13 +241,13 @@ namespace ZSJCMaster.Models
                             {
                                 this.TcpRecv(AlarmInfos, AlarmFlags);
                             }
-
+                            break;
                         }
-                        break;
+                        
                     }
                 }
             }
-            Thread.Sleep(50);
+            Thread.Sleep(1000);
             SendData(new byte[] { 0x89, 0x00,0x0a });
         }
 
