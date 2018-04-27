@@ -6,12 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using ZSJCMaster.Models;
 
 namespace ZSJCMaster.ViewModels
 {
-    class AlarmPageViewModel:MainWindowViewModel
+    class AlarmPageViewModel : MainWindowViewModel
     {
         private AlarmInfo currentItem;
         private AlarmLamp alarmLamp;
@@ -52,35 +51,36 @@ namespace ZSJCMaster.ViewModels
 
         public AlarmPageViewModel()
         {
-            if(App.Current == null) { return; }
-            try
+            alarmLamp = new AlarmLamp();
+            this.AlarmInfos = new ObservableCollection<AlarmInfo>();
+            if (App.Current == null) { return; }
+            ControlPad pad = new ControlPad((AlarmInfo[] info, bool[] flags) =>
             {
-                alarmLamp = new AlarmLamp();
-                this.AlarmInfos = new ObservableCollection<AlarmInfo>();
-                ControlPad pad = new ControlPad((AlarmInfo[] info, bool[] flags) =>
+                App.Current.Dispatcher.Invoke(() =>
                 {
-                    App.Current.Dispatcher.Invoke(() =>
+                    for (int i = 0; i < flags.Length; i++)
                     {
-                        for (int i = 0; i < flags.Length; i++)
+                        if (!IsEmpty(info[i]))
                         {
-                            if (flags[i])
-                            {
-                                AlarmInfos.Add(info[i]);
-                                CurrentItem = info[i];
-                            }
+                            AlarmInfos.Add(info[i]);
+                            CurrentItem = info[i];
                         }
-                    });
-
+                    }
                 });
-            }
-            catch (Exception ex)
-            {
+            });
 
-                MessageBox.Show(ex.Message);
-            }
-           
-            
         }
 
+        private bool IsEmpty(AlarmInfo alarmInfo)
+        {
+            if (alarmInfo.cameraNo != 0 || alarmInfo.x != 0 || alarmInfo.y != 0 || alarmInfo.width != 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }
