@@ -258,6 +258,7 @@ namespace ZSJCMaster.Models
             {
                 command[1] = (byte)(netPort - 1);
                 tcpComm.SendData(command);
+                
             }
 
         }

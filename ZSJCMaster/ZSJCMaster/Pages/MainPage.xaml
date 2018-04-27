@@ -17,6 +17,7 @@
     </i:Interaction.Triggers>
     <UserControl.Resources>
         <converter:CameraConverter x:Key="cameraConverter"/>
+        <converter:CameraSwitchConverter x:Key="cameraSwitchConverter"/>
         <Style x:Key="FIcon" TargetType="TextBlock">
             <Setter Property="TextElement.FontFamily" Value="pack://application:,,,/Fonts/#iconfont" />
             <Setter Property="TextBlock.TextAlignment" Value="Center"></Setter>
@@ -99,6 +100,7 @@
                                 <ColumnDefinition Width="300"/>
                                 <ColumnDefinition Width="30"/>
                                 <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="&#xea20;" Style="{StaticResource FIcon}" Grid.RowSpan="2"/>
                             <TextBlock Text="{Binding Name}" FontSize="20" Grid.Column="1"/>
@@ -116,6 +118,7 @@
                                 </i:Interaction.Triggers>
                             </Button>
                             <Button Content="&#xe606;" ToolTip="开启检测" Style="{StaticResource btnFIcon}" Grid.RowSpan="2" Grid.Column="3"/>
+                            <TextBlock Text="{Binding IsSwitching,Converter={StaticResource cameraSwitchConverter}}" Margin="10 0 0 0" Grid.RowSpan="2" Grid.Column="4" VerticalAlignment="Center" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
