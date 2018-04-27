@@ -10,7 +10,7 @@ using ZSJCMaster.Models;
 
 namespace ZSJCMaster.ViewModels
 {
-    class AlarmPageViewModel:MainWindowViewModel
+    class AlarmPageViewModel : MainWindowViewModel
     {
         private AlarmInfo currentItem;
         private AlarmLamp alarmLamp;
@@ -53,24 +53,34 @@ namespace ZSJCMaster.ViewModels
         {
             alarmLamp = new AlarmLamp();
             this.AlarmInfos = new ObservableCollection<AlarmInfo>();
-            if(App.Current == null) { return; }
-            ControlPad pad = new ControlPad((AlarmInfo[] info,bool[] flags)=> 
+            if (App.Current == null) { return; }
+            ControlPad pad = new ControlPad((AlarmInfo[] info, bool[] flags) =>
             {
-                App.Current.Dispatcher.Invoke(()=> 
+                App.Current.Dispatcher.Invoke(() =>
                 {
                     for (int i = 0; i < flags.Length; i++)
                     {
-                        if (flags[i])
+                        if (!IsEmpty(info[i]))
                         {
                             AlarmInfos.Add(info[i]);
                             CurrentItem = info[i];
                         }
                     }
                 });
-                
             });
-            
+
         }
 
+        private bool IsEmpty(AlarmInfo alarmInfo)
+        {
+            if (alarmInfo.cameraNo != 0 || alarmInfo.x != 0 || alarmInfo.y != 0 || alarmInfo.width != 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }

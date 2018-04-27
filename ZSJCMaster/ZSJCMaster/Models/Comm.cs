@@ -216,24 +216,28 @@ namespace ZSJCMaster.Models
                     {
                         if (bytes[i + 29] == 0x0a)
                         {
-                            //警报标志位
-                            for (int j = 0; j < 5; j++)
-                            {
-                                AlarmFlags[j] = (bytes[j + 1] == 1);
-                            }
                             CurrentNetPort = bytes[6 + i];
                             AlarmInfos = new AlarmInfo[5];
-                            int index = 0;
                             int offset = 7 + i;
                             for (int k = 0; k < 5; k++)
                             {
+                                AlarmFlags[k] = (bytes[k + 1] == 1);
                                 AlarmInfos[k] = new AlarmInfo();
-                                AlarmInfos[k].cameraNo = bytes[k + index * 4 + offset];
-                                AlarmInfos[k].x = bytes[k + index * 4 + 1 + offset];
-                                AlarmInfos[k].y = bytes[k + index * 4 + 2 + offset];
-                                AlarmInfos[k].width = bytes[k + index * 4 + 3 + offset];
+                                AlarmInfos[k].cameraNo = bytes[k * 4 + offset];
+                                AlarmInfos[k].x = bytes[k * 4 + 1 + offset];
+                                AlarmInfos[k].y = bytes[k * 4 + 2 + offset];
+                                AlarmInfos[k].width = bytes[k * 4 + 3 + offset];
                             }
-                            if (this.TcpRecv != null)
+                            bool alarmFlag = false;
+                            for (int j = 0; j < 5; j++)
+                            {
+                                if (AlarmFlags[j])
+                                {
+                                    alarmFlag = true;
+                                }
+                            }
+
+                            if (alarmFlag && (this.TcpRecv != null))
                             {
                                 this.TcpRecv(AlarmInfos, AlarmFlags);
                             }
@@ -243,6 +247,7 @@ namespace ZSJCMaster.Models
                     }
                 }
             }
+            Thread.Sleep(50);
             SendData(new byte[] { 0x89, 0x00,0x0a });
         }
 
