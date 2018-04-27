@@ -223,23 +223,22 @@ namespace ZSJCMaster.Models
                             }
                             CurrentNetPort = bytes[6 + i];
                             AlarmInfos = new AlarmInfo[5];
-                            int index = 0;
                             int offset = 7 + i;
                             for (int k = 0; k < 5; k++)
                             {
                                 AlarmInfos[k] = new AlarmInfo();
-                                AlarmInfos[k].cameraNo = bytes[k + index * 4 + offset];
-                                AlarmInfos[k].x = bytes[k + index * 4 + 1 + offset];
-                                AlarmInfos[k].y = bytes[k + index * 4 + 2 + offset];
-                                AlarmInfos[k].width = bytes[k + index * 4 + 3 + offset];
+                                AlarmInfos[k].cameraNo = bytes[k * 4 + offset];
+                                AlarmInfos[k].x = bytes[k * 4 + 1 + offset];
+                                AlarmInfos[k].y = bytes[k * 4 + 2 + offset];
+                                AlarmInfos[k].width = bytes[k * 4 + 3 + offset];
                             }
                             if (this.TcpRecv != null)
                             {
                                 this.TcpRecv(AlarmInfos, AlarmFlags);
                             }
-
+                            break;
                         }
-                        break;
+                        
                     }
                 }
             }
