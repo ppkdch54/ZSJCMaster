@@ -116,6 +116,23 @@ namespace ZSJCMaster.Models
             }
         }
 
+        private bool isSwitching;
+
+        /// <summary>
+        /// 是否正在切换
+        /// </summary>
+        public bool IsSwitching
+        {
+            get { return isSwitching; }
+            set
+            {
+                isSwitching = value;
+                this.RaisePropertyChanged("IsSwitching");
+            }
+        }
+
+
+
         public Camera()
         {
             LoadPara();

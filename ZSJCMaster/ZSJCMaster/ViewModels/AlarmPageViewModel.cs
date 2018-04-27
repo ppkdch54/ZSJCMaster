@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using ZSJCMaster.Models;
 
 namespace ZSJCMaster.ViewModels
@@ -51,24 +52,33 @@ namespace ZSJCMaster.ViewModels
 
         public AlarmPageViewModel()
         {
-            alarmLamp = new AlarmLamp();
-            this.AlarmInfos = new ObservableCollection<AlarmInfo>();
             if(App.Current == null) { return; }
-            ControlPad pad = new ControlPad((AlarmInfo[] info,bool[] flags)=> 
+            try
             {
-                App.Current.Dispatcher.Invoke(()=> 
+                alarmLamp = new AlarmLamp();
+                this.AlarmInfos = new ObservableCollection<AlarmInfo>();
+                ControlPad pad = new ControlPad((AlarmInfo[] info, bool[] flags) =>
                 {
-                    for (int i = 0; i < flags.Length; i++)
+                    App.Current.Dispatcher.Invoke(() =>
                     {
-                        if (flags[i])
+                        for (int i = 0; i < flags.Length; i++)
                         {
-                            AlarmInfos.Add(info[i]);
-                            CurrentItem = info[i];
+                            if (flags[i])
+                            {
+                                AlarmInfos.Add(info[i]);
+                                CurrentItem = info[i];
+                            }
                         }
-                    }
+                    });
+
                 });
-                
-            });
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
+           
             
         }
 

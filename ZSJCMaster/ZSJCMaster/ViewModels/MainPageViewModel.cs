@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -116,7 +117,7 @@ namespace ZSJCMaster.ViewModels
         /// <param name="camera"></param>
         private void SwitchCameraNetPort(Camera camera)
         {
-            int no = camera.No;
+            int no = camera.NetPortNum;
             try
             {
                 ControlPad pad = new ControlPad(camera.ControlPadNo);
@@ -150,10 +151,15 @@ namespace ZSJCMaster.ViewModels
                     
                 }
                 if (camera == null) { return; }
-                SwitchCameraNetPort(camera);
-                //启动远程桌面
-                Process p = Process.Start("mstsc.exe");
-                p.WaitForExit();//关键，等待外部程序退出后才能往下执行
+                Task.Run(()=> 
+                {
+                    camera.IsSwitching = true;
+                    SwitchCameraNetPort(camera);
+                    System.Threading.Thread.Sleep(3000);
+                    camera.IsSwitching = false;
+                    //启动远程桌面
+                    Process p = Process.Start("mstsc.exe");
+                });
             }
             catch (Exception ex)
             {

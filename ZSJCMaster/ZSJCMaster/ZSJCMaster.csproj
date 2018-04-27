@@ -91,6 +91,7 @@
       <DependentUpon>ControlPadContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\CameraConverter.cs" />
+    <Compile Include="Converters\CameraSwitchConverter.cs" />
     <Compile Include="Helpers\ExCommandParameter.cs" />
     <Compile Include="Helpers\ExInvokeCommandAction.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
