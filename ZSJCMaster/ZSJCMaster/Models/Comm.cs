@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
+using System.Windows;
 using ZSJCMaster.Helpers;
 
 namespace ZSJCMaster.Models
@@ -108,16 +109,26 @@ namespace ZSJCMaster.Models
         public void Open()
         {
             //if (!serial.IsOpen)
-           // {
+            // {
+            try
+            {
                 serial.Open();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+                
            // }
 
         }
 
         public void SendData(Byte[] data)
         {
-            
-            serial.Write(data, 0, data.Length);
+            if (serial.IsOpen)
+            {
+                serial.Write(data, 0, data.Length);
+            }
         }
 
         private void LoadPara()
@@ -197,36 +208,39 @@ namespace ZSJCMaster.Models
 
         private void Decode(byte[] bytes)
         {
-            for (int i = 0; i < bytes.Length; i++)
+            if (bytes.Length == 30)
             {
-                if (bytes[i] == 0x87)
+                for (int i = 0; i < bytes.Length; i++)
                 {
-                    if (bytes[i + 29] == 0x0a)
+                    if (bytes[i] == 0x87)
                     {
-                        //警报标志位
-                        for (int j = 0; j < 5; j++)
+                        if (bytes[i + 29] == 0x0a)
                         {
-                            AlarmFlags[j] = (bytes[j + 1] == 1);
-                        }
-                        CurrentNetPort = bytes[6 + i];
-                        AlarmInfos = new AlarmInfo[5];
-                        int index = 0;
-                        int offset = 7 + i;
-                        for (int k = 0; k < 5; k++)
-                        {
-                            AlarmInfos[k] = new AlarmInfo();
-                            AlarmInfos[k].cameraNo = bytes[k + index * 4 + offset];
-                            AlarmInfos[k].x = bytes[k + index * 4 + 1 + offset];
-                            AlarmInfos[k].y = bytes[k + index * 4 + 2 + offset];
-                            AlarmInfos[k].width = bytes[k + index * 4 + 3 + offset];
-                        }
-                        if (this.TcpRecv != null)
-                        {
-                            this.TcpRecv(AlarmInfos, AlarmFlags);
-                        }
+                            //警报标志位
+                            for (int j = 0; j < 5; j++)
+                            {
+                                AlarmFlags[j] = (bytes[j + 1] == 1);
+                            }
+                            CurrentNetPort = bytes[6 + i];
+                            AlarmInfos = new AlarmInfo[5];
+                            int index = 0;
+                            int offset = 7 + i;
+                            for (int k = 0; k < 5; k++)
+                            {
+                                AlarmInfos[k] = new AlarmInfo();
+                                AlarmInfos[k].cameraNo = bytes[k + index * 4 + offset];
+                                AlarmInfos[k].x = bytes[k + index * 4 + 1 + offset];
+                                AlarmInfos[k].y = bytes[k + index * 4 + 2 + offset];
+                                AlarmInfos[k].width = bytes[k + index * 4 + 3 + offset];
+                            }
+                            if (this.TcpRecv != null)
+                            {
+                                this.TcpRecv(AlarmInfos, AlarmFlags);
+                            }
 
+                        }
+                        break;
                     }
-                    break;
                 }
             }
             SendData(new byte[] { 0x00 });
