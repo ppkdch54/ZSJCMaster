@@ -8,8 +8,6 @@ using ZSJCMaster.Helpers;
 using System.Collections.ObjectModel;
 using System.Xml;
 using System.Windows;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace ZSJCMaster.Models
 {
@@ -102,7 +100,7 @@ namespace ZSJCMaster.Models
             LoadPara(conrolpadId);
             tcpComm = new TcpComm(IP, PortNum);
             command = new byte[5];
-            command[0] = 0x87;
+            command[0] = 0x85;
             command[4] = 0x0a;
         }
         //构造函数,打开串口
@@ -119,16 +117,10 @@ namespace ZSJCMaster.Models
                 }
             };
             command = new byte[5];
-            command[0] = 0x87;
+            command[0] = 0x85;
             command[4] = 0x0a;
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    Thread.Sleep(1000);
-                    tcpComm.SendData(new byte[] { 0x89, 0x00, 0x0a });
-                }
-            });
+            tcpComm.SendData(new byte[] { 0x89, 0x00, 0x0a });
+            //SwitchNetPort(1);
         }
 
         public void LoadPara(int padId = 1)
