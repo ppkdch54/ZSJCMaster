@@ -208,11 +208,11 @@ namespace ZSJCMaster.Models
 
         private void Decode(byte[] bytes)
         {
-            if (bytes.Length == 30)
+            if (bytes.Length >= 30)
             {
                 for (int i = 0; i < bytes.Length; i++)
                 {
-                    if (bytes[i] == 0x82)
+                    if (bytes[i] == 0x87)
                     {
                         if (bytes[i + 29] == 0x0a)
                         {
@@ -247,8 +247,6 @@ namespace ZSJCMaster.Models
                     }
                 }
             }
-            Thread.Sleep(1000);
-            SendData(new byte[] { 0x89, 0x00,0x0a });
         }
 
         public bool[] AlarmFlags { get; set; }
