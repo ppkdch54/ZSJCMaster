@@ -21,10 +21,14 @@
                       CanUserAddRows="False" SelectionMode="Single" SelectedItem="{Binding CurrentItem}">
                 <DataGrid.Columns>
                     <mui:DataGridTextColumn Width="30" Binding="{Binding Id}" IsReadOnly="True" ElementStyle="{StaticResource contentCenterStyle}"/>
-                    <mui:DataGridTextColumn Header="相机" Width="140" Binding="{Binding cameraNo}" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <mui:DataGridTextColumn Header="相机" Width="140" Binding="{Binding cameraName}" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <mui:DataGridTextColumn Header="信息" Width="1*" Binding="{Binding info}" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <mui:DataGridTextColumn Header="时间" Width="1*" Binding="{Binding infoTime}" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <!--
                     <mui:DataGridTextColumn Header="X坐标" Width="140" Binding="{Binding x}" ElementStyle="{StaticResource contentCenterStyle}"/>
                     <mui:DataGridTextColumn Header="Y坐标" Binding="{Binding y}" ElementStyle="{StaticResource contentCenterStyle}"/>
-                </DataGrid.Columns>
+                    -->
+                    </DataGrid.Columns>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Loaded">
                         <helper:ExInvokeCommandAction Command="{Binding DataGridLoadedCommand}" CommandParameter="{Binding ElementName=dgvControlPads}"/>

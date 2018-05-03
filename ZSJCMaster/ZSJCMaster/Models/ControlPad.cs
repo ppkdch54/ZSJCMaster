@@ -110,25 +110,33 @@ namespace ZSJCMaster.Models
         {
             this.tcpRecv = tcpRecv;
             LoadPara();
-            tcpComm = new TcpComm(IP,PortNum);
-            tcpComm.TcpRecv = (AlarmInfo[] info,bool[] flags) => 
+            try
             {
-                if(this.tcpRecv != null)
+                tcpComm = new TcpComm(IP, PortNum);
+                tcpComm.TcpRecv = (AlarmInfo[] info, bool[] flags) =>
                 {
-                    this.tcpRecv(info, flags);
-                }
-            };
-            command = new byte[5];
-            command[0] = 0x87;
-            command[4] = 0x0a;
-            Task.Run(() =>
+                    if (this.tcpRecv != null)
+                    {
+                        this.tcpRecv(info, flags);
+                    }
+                };
+                command = new byte[5];
+                command[0] = 0x87;
+                command[4] = 0x0a;
+                Task.Run(() =>
+                {
+                    while (true)
+                    {
+                        Thread.Sleep(1000);
+                        tcpComm.SendData(new byte[] { 0x89, 0x00, 0x0a });
+                    }
+                });
+            }
+            catch (Exception ex)
             {
-                while (true)
-                {
-                    Thread.Sleep(1000);
-                    tcpComm.SendData(new byte[] { 0x89, 0x00, 0x0a });
-                }
-            });
+                MessageBox.Show(ex.Message);
+            }
+            
         }
 
         public void LoadPara(int padId = 1)

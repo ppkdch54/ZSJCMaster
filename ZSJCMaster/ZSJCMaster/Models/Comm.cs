@@ -223,10 +223,12 @@ namespace ZSJCMaster.Models
                             {
                                 AlarmFlags[k] = (bytes[k + 1] == 1);
                                 AlarmInfos[k] = new AlarmInfo();
-                                AlarmInfos[k].cameraNo = bytes[k * 4 + offset];
+                                //AlarmInfos[k].cameraNo = bytes[k * 4 + offset];
+                                AlarmInfos[k].cameraNo = bytes[k + 1] == 1 ? 6 - k - 1 : 0;
                                 AlarmInfos[k].x = bytes[k * 4 + 1 + offset];
                                 AlarmInfos[k].y = bytes[k * 4 + 2 + offset];
                                 AlarmInfos[k].width = bytes[k * 4 + 3 + offset];
+                                AlarmInfos[k].infoTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                             }
                             bool alarmFlag = false;
                             for (int j = 0; j < 5; j++)
@@ -257,9 +259,12 @@ namespace ZSJCMaster.Models
     public class AlarmInfo : BindableBase
     {
         public int cameraNo { get; set; }
+        public string cameraName { get; set; }
         public int x { get; set; }
         public int y { get; set; }
         public int width { get; set; }
+        public string info { get; set; } = "有报警，请连接至下位机查看";
+        public string infoTime { get; set; }
     }
 
 }

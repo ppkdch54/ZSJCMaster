@@ -9,7 +9,7 @@
         xmlns:local="clr-namespace:ZSJCMaster.Views"
         mc:Ignorable="d"
         Title="纵撕检测上位机"  IsTitleVisible="True"
-        ContentSource="Pages\MainPage.xaml" x:Name="window"
+        ContentSource="Pages\AlarmPage.xaml" x:Name="window"
         Height="450" Width="780" WindowStartupLocation="CenterScreen" >
     <mui:ModernWindow.MenuLinkGroups>
         <mui:LinkGroup DisplayName="设备监控">
@@ -18,7 +18,7 @@
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="实时报警">
-            <mui:LinkGroup.Links >
+            <mui:LinkGroup.Links>
                 <mui:Link Source="Pages\AlarmPage.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>

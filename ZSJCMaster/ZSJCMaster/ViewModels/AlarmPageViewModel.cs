@@ -40,12 +40,6 @@ namespace ZSJCMaster.ViewModels
             {
                 alarmInfos = value;
                 this.RaisePropertyChanged("AlarmInfos");
-                Task.Run(() => {
-                    alarmLamp.AlarmMusicAndFlash();
-                    Thread.Sleep(2000);
-                    alarmLamp.StopAllAlarm();
-                });
-
             }
         }
 
@@ -54,6 +48,10 @@ namespace ZSJCMaster.ViewModels
             alarmLamp = new AlarmLamp();
             this.AlarmInfos = new ObservableCollection<AlarmInfo>();
             if (App.Current == null) { return; }
+            if(this.ControlPads == null)
+            {
+                this.ControlPads = ControlPad.GetAllControlPads();
+            }
             ControlPad pad = new ControlPad((AlarmInfo[] info, bool[] flags) =>
             {
                 App.Current.Dispatcher.Invoke(() =>
@@ -62,7 +60,22 @@ namespace ZSJCMaster.ViewModels
                     {
                         if (!IsEmpty(info[i]))
                         {
+
+                            var controlpad = this.ControlPads.SingleOrDefault(p => p.Id == 1);
+                            if (controlpad != null)
+                            {
+                                var camera = controlpad.GetCameras(controlpad.Id).SingleOrDefault(c => c.No == info[i].cameraNo);
+                                info[i].cameraName = camera.Name;
+                            }
+
                             AlarmInfos.Add(info[i]);
+                            //向报警器串口发送命令
+                            Task.Run(() => {
+                                alarmLamp.AlarmMusicAndFlash();
+                                Thread.Sleep(2000);
+                                alarmLamp.StopAllAlarm();
+                            });
+
                             CurrentItem = info[i];
                         }
                     }
