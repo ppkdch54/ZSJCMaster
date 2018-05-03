@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Xml.Linq;
 using ZSJCMaster.Helpers;
 
@@ -10,23 +11,23 @@ namespace ZSJCMaster.Models
 
     public class Camera : BindableBase
     {
-        private int no;
+        private int id;
 
         /// <summary>
         /// 相机编号
         /// </summary>
-        public int No
+        public int Id
         {
-            get { return no; }
+            get { return id; }
             set
             {
-                no = value;
-                this.RaisePropertyChanged("No");
+                id = value;
+                this.RaisePropertyChanged("Id");
             }
         }
 
 
-        private string name;
+        private string name = "新相机";
 
         /// <summary>
         /// 相机名称
@@ -41,7 +42,7 @@ namespace ZSJCMaster.Models
             }
         }
 
-        private string ip;
+        private string ip = "0.0.0.0";
 
         /// <summary>
         /// 相机IP
@@ -104,7 +105,7 @@ namespace ZSJCMaster.Models
         private string alarmPicDir;
 
         /// <summary>
-        /// 上位机报警图片存储路径
+        /// 报警图片存储路径
         /// </summary>
         public string AlarmPicDir
         {
@@ -151,5 +152,76 @@ namespace ZSJCMaster.Models
         {
 
         }
+
+        public static void AddCamera(Camera camera)
+        {
+            XDocument doc = XDocument.Load("Application.config");
+            var controlpad = doc.Descendants("controlpads").Descendants("controlpad").
+                SingleOrDefault(p => p.Attribute("id").Value == camera.ControlPadNo.ToString());
+            if (controlpad == null) { return; }
+            var camerasNode = controlpad.Descendants("cameras");
+            //如果为空，说明是第一次添加相机
+            if(camerasNode.Count() <= 0)
+            {
+                controlpad.Add(new XElement("cameras"));
+            }
+            //重新获取
+            var cameras = controlpad.Descendants("cameras").Single();
+            //添加相机
+            var cameraElement = new XElement("camera");
+            cameraElement.SetAttributeValue("id", camera.Id);
+            cameraElement.SetAttributeValue("name", camera.Name);
+            cameraElement.Add(new XElement("ip", camera.IP));
+            cameraElement.Add(new XElement("beltNo", camera.BeltNo));
+            cameraElement.Add(new XElement("netPortNum", camera.NetPortNum));
+            cameraElement.Add(new XElement("controlPadNo", camera.ControlPadNo));
+            cameraElement.Add(new XElement("alarmPicDir", camera.AlarmPicDir));
+            cameras.Add(cameraElement);
+            //save
+            doc.Save("Application.config");
+        }
+
+        public static void UpdateCamera(Camera camera)
+        {
+            XDocument doc = XDocument.Load("Application.config");
+            var controlpad = doc.Descendants("controlpads").Descendants("controlpad").
+                SingleOrDefault(p => p.Attribute("id").Value == camera.ControlPadNo.ToString());
+            if (controlpad == null) { return; }
+            var cameras = controlpad.Descendants("cameras").Descendants("camera");
+            if (cameras == null) { return; }
+            var existCamera = cameras.SingleOrDefault(c => c.Attribute("id").Value == camera.Id.ToString());
+            if (existCamera == null) { return; }
+            existCamera.Attribute("name").SetValue(camera.Name);
+            var nodes = existCamera.Descendants().ToList();
+            nodes.Single(p => p.Name == "ip").SetValue(camera.IP);
+            nodes.Single(p => p.Name == "beltNo").SetValue(camera.BeltNo);
+            nodes.Single(p => p.Name == "netPortNum").SetValue(camera.NetPortNum);
+            nodes.Single(p => p.Name == "controlPadNo").SetValue(camera.ControlPadNo);
+            nodes.Single(p => p.Name == "alarmPicDir").SetValue(camera.AlarmPicDir);
+            //save
+            doc.Save("Application.config");
+        }
+
+        public static bool DeleteCamera(int cameraId,int controlpadId)
+        {
+            XDocument doc = XDocument.Load("Application.config");
+            var controlpad = doc.Descendants("controlpads").Descendants("controlpad").
+                SingleOrDefault(p => p.Attribute("id").Value == controlpadId.ToString());
+            if (controlpad == null) { return false; }
+            var cameras = controlpad.Descendants("cameras").Descendants("camera");
+            if (cameras == null) { return false; }
+            var existCamera = cameras.SingleOrDefault(c => c.Attribute("id").Value == cameraId.ToString());
+            if (existCamera == null) { return false; }
+            var result = MessageBox.Show("确实要删除该相机吗？", "提示", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (result == MessageBoxResult.OK)
+            {
+                existCamera.Remove();
+                doc.Save("Application.config");
+                return true;
+            }
+            return false;
+            
+        }
+
     }
 }

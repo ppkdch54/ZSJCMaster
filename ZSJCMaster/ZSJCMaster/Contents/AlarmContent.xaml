@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="ZSJCMaster.Contents.AlarmContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:helper="clr-namespace:ZSJCMaster.Helpers"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="350">
+    <Grid Style="{StaticResource ContentRoot}">
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Setter Property="Margin" Value="5"/>
+            </Style>
+        </Grid.Resources>
+        <ScrollViewer>
+            <StackPanel MinWidth="200">
+                <TextBlock Text="串口设置" Style="{StaticResource Heading2}" />
+                <Grid Margin="10" Width="300" HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Text="端口:"/>
+                    <ComboBox x:Name="cboPortNums" Grid.Column="1" ItemsSource="{Binding PortList}" SelectedItem="{Binding PortName}" Tag="PortName" 
+                              DisplayMemberPath="DisplayName" SelectedValuePath="Value">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboPortNums}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <TextBlock Grid.Row="1" Text="波特率:"/>
+                    <ComboBox x:Name="cboBaudRates" Grid.Row="1" Grid.Column="1" SelectedItem="{Binding BaudRate}" ItemsSource="{Binding BaudRateList}" Tag="BaudRate" 
+                              DisplayMemberPath="DisplayName" SelectedValuePath="Value">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboBaudRates}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <TextBlock Grid.Row="2" Text="数据位:"/>
+                    <ComboBox x:Name="cboDataBits" Grid.Row="2" Grid.Column="1" SelectedItem="{Binding DataBits}" ItemsSource="{Binding DataBitList}" Tag="DataBits"
+                              DisplayMemberPath="DisplayName" SelectedValuePath="Value">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboDataBits}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <TextBlock Grid.Row="3" Text="校验位:"/>
+                    <ComboBox x:Name="cboParity" Grid.Row="3" Grid.Column="1" SelectedItem="{Binding Parity}" ItemsSource="{Binding ParityList}" Tag="Parity"
+                              DisplayMemberPath="DisplayName" SelectedValuePath="Value">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboParity}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <TextBlock Grid.Row="4" Text="停止位:"/>
+                    <ComboBox x:Name="cboStopBits" Grid.Row="4" Grid.Column="1" SelectedItem="{Binding StopBits}" ItemsSource="{Binding StopBitList}" Tag="StopBits"
+                              DisplayMemberPath="DisplayName" SelectedValuePath="Value">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboStopBits}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

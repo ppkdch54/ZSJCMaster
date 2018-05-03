@@ -81,12 +81,12 @@ namespace ZSJCMaster.Models
 
 
 
-        private List<Camera> cameras;
+        private ObservableCollection<Camera> cameras;
 
         /// <summary>
         /// 相机集合
         /// </summary>
-        public List<Camera> Cameras
+        public ObservableCollection<Camera> Cameras
         {
             get { return cameras; }
             set
@@ -157,7 +157,7 @@ namespace ZSJCMaster.Models
         /// </summary>
         /// <param name="controlPadNo">控制板编号</param>
         /// <returns>相机集合</returns>
-        public List<Camera> GetCameras(int controlPadNo)
+        public ObservableCollection<Camera> GetCameras(int controlPadNo)
         {
             XDocument doc = XDocument.Load("Application.config");
             var controlpad = doc.Descendants("controlpads").Descendants("controlpad").
@@ -165,13 +165,13 @@ namespace ZSJCMaster.Models
             if (controlpad == null) { return null; }
             var cameras = controlpad.Descendants("cameras").Descendants("camera");
             if (cameras == null) { return null; }
-            List<Camera> list = new List<Camera>();
+            ObservableCollection<Camera> list = new ObservableCollection<Camera>();
             foreach (var item in cameras)
             {
                 var props = item.Descendants();
                 Camera camera = new Camera()
                 {
-                    No = int.Parse(item.Attribute("id").Value),
+                    Id = int.Parse(item.Attribute("id").Value),
                     Name = item.Attribute("name").Value,
                     IP = props.SingleOrDefault(p => p.Name == "ip").Value,
                     BeltNo = int.Parse(props.SingleOrDefault(p => p.Name == "beltNo").Value),
@@ -256,9 +256,15 @@ namespace ZSJCMaster.Models
                 return false;
             }else
             {
-                controlpad.Remove();
-                doc.Save("Application.config");
-                return true;
+                var result = MessageBox.Show("确实要删除该控制板吗？", "提示", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                if(result == MessageBoxResult.OK)
+                {
+                    controlpad.Remove();
+                    doc.Save("Application.config");
+                    return true;
+                }
+                return false;
+                
             }
             
         }

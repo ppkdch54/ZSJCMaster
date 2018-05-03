@@ -64,7 +64,7 @@ namespace ZSJCMaster.ViewModels
                             var controlpad = this.ControlPads.SingleOrDefault(p => p.Id == 1);
                             if (controlpad != null)
                             {
-                                var camera = controlpad.GetCameras(controlpad.Id).SingleOrDefault(c => c.No == info[i].cameraNo);
+                                var camera = controlpad.GetCameras(controlpad.Id).SingleOrDefault(c => c.Id == info[i].cameraNo);
                                 info[i].cameraName = camera.Name;
                             }
 

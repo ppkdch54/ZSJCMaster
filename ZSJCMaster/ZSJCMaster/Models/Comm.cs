@@ -92,18 +92,22 @@ namespace ZSJCMaster.Models
 
         ~SerialComm()
         {
-            if (serial.IsOpen)
+            if(serial != null)
             {
-                try
+                if (serial.IsOpen)
                 {
-                    serial.Close();
-                    serial.Dispose();
-                }
-                catch (Exception err)
-                {
-                    throw new Exception(err.Message);
+                    try
+                    {
+                        serial.Close();
+                        serial.Dispose();
+                    }
+                    catch (Exception err)
+                    {
+                        throw new Exception(err.Message);
+                    }
                 }
             }
+            
         }
 
         public void Open()

@@ -20,12 +20,12 @@ namespace ZSJCMaster.ViewModels
     class MainPageViewModel: MainWindowViewModel
     {
         private ControlPad currentPad;  //当前选中的控制板
-        private List<Camera> cameras;
+        private ObservableCollection<Camera> cameras;
         private Camera camera;
         /// <summary>
         /// 相机集合
         /// </summary>
-        public List<Camera> Cameras
+        public ObservableCollection<Camera> Cameras
         {
             get { return cameras; }
             set
@@ -84,7 +84,7 @@ namespace ZSJCMaster.ViewModels
                     //contextMenu.Items.Add(new MenuItem { Header = "连接", Command = this.RemoteDesktopCommand });
                     var menuItem = new MenuItem { Header = "连接" };
                     menuItem.Name = "menuConnect";
-                    menuItem.Tag = (sender.SelectedItem as Camera).No;
+                    menuItem.Tag = (sender.SelectedItem as Camera).Id;
                     menuItem.Command = this.RemoteDesktopCommand;
                     var parameter = new ExCommandParameter();
                     parameter.Sender = menuItem;
@@ -140,14 +140,14 @@ namespace ZSJCMaster.ViewModels
                 {
                     var sender = param.Sender as Button;
                     no = int.Parse(sender.Tag.ToString());
-                    camera = this.Cameras.SingleOrDefault(c => c.No == no);
+                    camera = this.Cameras.SingleOrDefault(c => c.Id == no);
                 }
                 else if(param.Sender is MenuItem)
                 {
                     var sender = param.Sender as MenuItem;
                     no = int.Parse(sender.Tag.ToString());
                     if (this.currentPad == null) { return; }
-                    camera = this.currentPad.Cameras.SingleOrDefault(c => c.No == no);
+                    camera = this.currentPad.Cameras.SingleOrDefault(c => c.Id == no);
                     
                 }
                 if (camera == null) { return; }
