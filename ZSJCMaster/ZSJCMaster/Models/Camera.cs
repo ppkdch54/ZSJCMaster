@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using FirstFloor.ModernUI.Windows.Controls;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -212,7 +213,7 @@ namespace ZSJCMaster.Models
             if (cameras == null) { return false; }
             var existCamera = cameras.SingleOrDefault(c => c.Attribute("id").Value == cameraId.ToString());
             if (existCamera == null) { return false; }
-            var result = MessageBox.Show("确实要删除该相机吗？", "提示", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            var result = ModernDialog.ShowMessage("确实要删除该相机吗？", "提示", MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.OK)
             {
                 existCamera.Remove();

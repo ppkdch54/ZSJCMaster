@@ -26,5 +26,12 @@ namespace ZSJCMaster.Views
             InitializeComponent();
             this.DataContext = new MainWindowViewModel();
         }
+
+        private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.Visibility = Visibility.Hidden;
+            this.ShowInTaskbar = false;
+        }
     }
 }

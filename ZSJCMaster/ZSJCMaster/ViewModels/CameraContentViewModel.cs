@@ -23,20 +23,6 @@ namespace ZSJCMaster.ViewModels
                 this.RaisePropertyChanged("CurrentControlPad");
             }
         }
-        private ObservableCollection<Camera> cameras;
-
-        /// <summary>
-        /// 相机集合
-        /// </summary>
-        public ObservableCollection<Camera> Cameras
-        {
-            get { return cameras; }
-            set
-            {
-                cameras = value;
-                this.RaisePropertyChanged("Cameras");
-            }
-        }
 
         #region command
         public DelegateCommand<ExCommandParameter> PageLoadedCommand { get; set; }
@@ -59,7 +45,7 @@ namespace ZSJCMaster.ViewModels
             var controlpad = sender.SelectedItem as ControlPad;
             if (controlpad == null) { return; }
             this.CurrentControlPad = controlpad;
-            this.Cameras = controlpad.GetCameras(controlpad.Id);
+            this.Cameras = controlpad.GetCameras();
         }
         private void SelectAlarmPicPath(ExCommandParameter param)
         {

@@ -10,6 +10,7 @@ using System.Xml;
 using System.Windows;
 using System.Threading.Tasks;
 using System.Threading;
+using FirstFloor.ModernUI.Windows.Controls;
 
 namespace ZSJCMaster.Models
 {
@@ -17,8 +18,8 @@ namespace ZSJCMaster.Models
     {
         TcpComm tcpComm;
         byte[] command;
-        TcpRecvDelegate tcpRecv;
 
+        #region 属性
         private int id;
 
         /// <summary>
@@ -79,8 +80,6 @@ namespace ZSJCMaster.Models
             }
         }
 
-
-
         private ObservableCollection<Camera> cameras;
 
         /// <summary>
@@ -95,34 +94,19 @@ namespace ZSJCMaster.Models
                 this.RaisePropertyChanged("Cameras");
             }
         }
+        #endregion
 
         public ControlPad() { }
-        public ControlPad(int conrolpadId)
-        {
-            LoadPara(conrolpadId);
-            tcpComm = new TcpComm(IP, PortNum);
-            command = new byte[5];
-            command[0] = 0x87;
-            command[4] = 0x0a;
-        }
+
         //构造函数,打开串口
-        public ControlPad(TcpRecvDelegate tcpRecv)
+        public ControlPad(int controlpadId,TcpRecvDelegate tcpRecv)
         {
-            this.tcpRecv = tcpRecv;
-            LoadPara();
             try
             {
-                tcpComm = new TcpComm(IP, PortNum);
-                tcpComm.TcpRecv = (AlarmInfo[] info, bool[] flags) =>
-                {
-                    if (this.tcpRecv != null)
-                    {
-                        this.tcpRecv(info, flags);
-                    }
-                };
-                command = new byte[5];
-                command[0] = 0x87;
-                command[4] = 0x0a;
+                //读取参数
+                LoadPara(controlpadId);
+                //初始化TCP连接
+                tcpComm = new TcpComm(IP, PortNum, tcpRecv);
                 Task.Run(() =>
                 {
                     while (true)
@@ -132,13 +116,14 @@ namespace ZSJCMaster.Models
                     }
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show(ex.Message);
+                throw;
             }
             
         }
 
+        #region 操作配置文件
         public void LoadPara(int padId = 1)
         {
             XDocument doc = XDocument.Load("Application.config");
@@ -155,13 +140,12 @@ namespace ZSJCMaster.Models
         /// <summary>
         /// 从配置文件读取指定编号的控制板的所有相机信息
         /// </summary>
-        /// <param name="controlPadNo">控制板编号</param>
         /// <returns>相机集合</returns>
-        public ObservableCollection<Camera> GetCameras(int controlPadNo)
+        public ObservableCollection<Camera> GetCameras()
         {
             XDocument doc = XDocument.Load("Application.config");
             var controlpad = doc.Descendants("controlpads").Descendants("controlpad").
-                SingleOrDefault(p => p.Attribute("id").Value == controlPadNo.ToString());
+                SingleOrDefault(p => p.Attribute("id").Value == this.Id.ToString());
             if (controlpad == null) { return null; }
             var cameras = controlpad.Descendants("cameras").Descendants("camera");
             if (cameras == null) { return null; }
@@ -252,11 +236,11 @@ namespace ZSJCMaster.Models
             int cameraCount = controlpad.Descendants("camera").Count();
             if(cameraCount > 0)
             {
-                MessageBox.Show("该控制板下存在相机，不能删除!","提示",MessageBoxButton.OK,MessageBoxImage.Warning);
+                ModernDialog.ShowMessage("该控制板下存在相机，不能删除!","提示",MessageBoxButton.OK);
                 return false;
             }else
             {
-                var result = MessageBox.Show("确实要删除该控制板吗？", "提示", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                var result = ModernDialog.ShowMessage("确实要删除该控制板吗？", "提示", MessageBoxButton.OKCancel);
                 if(result == MessageBoxResult.OK)
                 {
                     controlpad.Remove();
@@ -268,17 +252,17 @@ namespace ZSJCMaster.Models
             }
             
         }
+        #endregion
 
-        public void SavePara()
-        {
-
-        }
-
+        //切换网口
         public void SwitchNetPort(int netPort)
         {
             if (tcpComm!=null)
             {
+                command = new byte[5];
+                command[0] = 0x87;
                 command[1] = (byte)(netPort - 1);
+                command[4] = 0x0a;
                 tcpComm.SendData(command);
                 
             }

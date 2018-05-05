@@ -19,8 +19,8 @@ namespace ZSJCMaster.Models
         System.IO.Ports.Parity parity;
         int dataBits;
         StopBits stopBits;
-        
 
+        #region 串口参数(仅供设置参数使用)
         public string PortName
         {
             get { return portName; }
@@ -61,17 +61,8 @@ namespace ZSJCMaster.Models
                 stopBits = value;
             }
         }
+        #endregion
         SerialPort serial;
-        //public EventHandler DataReceived { get; set{} }
-        public SerialPort Serial
-        {
-            get { return serial; }
-            set
-            {
-                serial = value;
-                this.RaisePropertyChanged("Serial");
-            }
-        }
 
         public SerialComm()
         {
@@ -80,14 +71,9 @@ namespace ZSJCMaster.Models
 
         public void InitialSerial()
         {
-            NewMethod();
+            serial = new SerialPort(PortName, BaudRate, Parity, DataBits, StopBits);
             serial.ReceivedBytesThreshold = 4;//设置 DataReceived 事件发生前内部输入缓冲区中的字节数
             Open();
-        }
-
-        private void NewMethod()
-        {
-            serial = new SerialPort(PortName, BaudRate, Parity, DataBits, StopBits);
         }
 
         ~SerialComm()
@@ -101,9 +87,9 @@ namespace ZSJCMaster.Models
                         serial.Close();
                         serial.Dispose();
                     }
-                    catch (Exception err)
+                    catch (Exception)
                     {
-                        throw new Exception(err.Message);
+                        throw;
                     }
                 }
             }
@@ -112,18 +98,14 @@ namespace ZSJCMaster.Models
 
         public void Open()
         {
-            //if (!serial.IsOpen)
-            // {
             try
             {
                 serial.Open();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show(ex.Message);
+                throw;
             }
-                
-           // }
 
         }
 
@@ -152,26 +134,13 @@ namespace ZSJCMaster.Models
     public class TcpComm : BindableBase
     {
         SimpleTcpClient simpleTcp;
-        string ip;
-        int port;
-
-        private TcpRecvDelegate tcpRecv;
-        public TcpRecvDelegate TcpRecv
-        {
-            get { return tcpRecv; }
-            set
-            {
-                tcpRecv = value;
-            }
-        }
+        TcpRecvDelegate tcpRecv;
 
         public TcpComm() { }
-        public TcpComm(string ip, int port)
+        public TcpComm(string ip, int port,TcpRecvDelegate tcpRecv)
         {
+            this.tcpRecv = tcpRecv;
             AlarmFlags = new bool[5];
-
-            this.ip = ip;
-            this.port = port;
             try
             {
                 simpleTcp = new SimpleTcpClient().Connect(ip, port);
@@ -209,7 +178,6 @@ namespace ZSJCMaster.Models
             
         }
 
-
         private void Decode(byte[] bytes)
         {
             if (bytes.Length >= 30)
@@ -228,11 +196,11 @@ namespace ZSJCMaster.Models
                                 AlarmFlags[k] = (bytes[k + 1] == 1);
                                 AlarmInfos[k] = new AlarmInfo();
                                 //AlarmInfos[k].cameraNo = bytes[k * 4 + offset];
-                                AlarmInfos[k].cameraNo = bytes[k + 1] == 1 ? 6 - k - 1 : 0;
-                                AlarmInfos[k].x = bytes[k * 4 + 1 + offset];
-                                AlarmInfos[k].y = bytes[k * 4 + 2 + offset];
-                                AlarmInfos[k].width = bytes[k * 4 + 3 + offset];
-                                AlarmInfos[k].infoTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                AlarmInfos[k].CameraNo = bytes[k + 1] == 1 ? 6 - k - 1 : 0;
+                                AlarmInfos[k].X = bytes[k * 4 + 1 + offset];
+                                AlarmInfos[k].Y = bytes[k * 4 + 2 + offset];
+                                AlarmInfos[k].Width = bytes[k * 4 + 3 + offset];
+                                AlarmInfos[k].InfoTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                             }
                             bool alarmFlag = false;
                             for (int j = 0; j < 5; j++)
@@ -243,9 +211,9 @@ namespace ZSJCMaster.Models
                                 }
                             }
 
-                            if (alarmFlag && (this.TcpRecv != null))
+                            if (alarmFlag && (this.tcpRecv != null))
                             {
-                                this.TcpRecv(AlarmInfos, AlarmFlags);
+                                this.tcpRecv(AlarmInfos, AlarmFlags);
                             }
                             break;
                         }
@@ -262,13 +230,26 @@ namespace ZSJCMaster.Models
 
     public class AlarmInfo : BindableBase
     {
-        public int cameraNo { get; set; }
-        public string cameraName { get; set; }
-        public int x { get; set; }
-        public int y { get; set; }
-        public int width { get; set; }
-        public string info { get; set; } = "有报警，请连接至下位机查看";
-        public string infoTime { get; set; }
+        public int CameraNo { get; set; }
+        public string CameraName { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public string InfoTime { get; set; }
+    }
+
+    /// <summary>
+    /// 报警信息Model(数据库专用)
+    /// </summary>
+    public class AlarmInfoForDB:BindableBase
+    {
+        public long Id { get; set; }
+        public int ControlPadId { get; set; }
+        public int CameraId { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public DateTime InfoTime { get; set; }
+
     }
 
 }

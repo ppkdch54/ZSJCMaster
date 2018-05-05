@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using FirstFloor.ModernUI.Windows.Controls;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -20,20 +21,6 @@ namespace ZSJCMaster.ViewModels
     class MainPageViewModel: MainWindowViewModel
     {
         private ControlPad currentPad;  //当前选中的控制板
-        private ObservableCollection<Camera> cameras;
-        private Camera camera;
-        /// <summary>
-        /// 相机集合
-        /// </summary>
-        public ObservableCollection<Camera> Cameras
-        {
-            get { return cameras; }
-            set
-            {
-                cameras = value;
-                this.RaisePropertyChanged("Cameras");
-            }
-        }
 
         #region commands
         public DelegateCommand<ExCommandParameter> PageLoadedCommand { get; set; }
@@ -57,7 +44,7 @@ namespace ZSJCMaster.ViewModels
             var sender = param.Sender as ComboBox;
             var pad = sender.SelectedItem as ControlPad;
             if (pad == null) { return; }
-            this.Cameras = pad.GetCameras(pad.Id);
+            this.Cameras = pad.GetCameras();
         }
         private void TreeViewSelectChanged(ExCommandParameter param)
         {
@@ -71,7 +58,7 @@ namespace ZSJCMaster.ViewModels
                 }
                 var pad = sender.SelectedItem as ControlPad;
                 this.currentPad = pad;
-                pad.Cameras = pad.GetCameras(pad.Id);
+                pad.Cameras = pad.GetCameras();
             }
             else if (sender.SelectedItem is Camera)
             {
@@ -103,7 +90,7 @@ namespace ZSJCMaster.ViewModels
         {
             var sender = param.Sender as ListBox;
             var args = param.EventArgs as SelectionChangedEventArgs;
-            camera = sender.SelectedItem as Camera;
+            var camera = sender.SelectedItem as Camera;
             if (camera!=null)
             {
                 SwitchCameraNetPort(camera);
@@ -120,12 +107,12 @@ namespace ZSJCMaster.ViewModels
             int no = camera.NetPortNum;
             try
             {
-                ControlPad pad = new ControlPad(camera.ControlPadNo);
+                ControlPad pad = new ControlPad(camera.ControlPadNo,null);
                 pad.SwitchNetPort(no);
             }
             catch (Exception ex)
             {
-                throw ex;
+                ModernDialog.ShowMessage(ex.Message,"提示",MessageBoxButton.OK);
             }
             
         }
@@ -163,7 +150,7 @@ namespace ZSJCMaster.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                ModernDialog.ShowMessage(ex.Message,"提示",MessageBoxButton.OK);
             }
 
         }

@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using FirstFloor.ModernUI.Windows.Controls;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace ZSJCMaster.ViewModels
 
                 //string errorTitle = Application.Current.FindResource("ErrorTitle").ToString();
                 //string errorInfo = Application.Current.FindResource("UserNameOrPasswordError").ToString();
-                MessageBox.Show("用户名或密码错误", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ModernDialog.ShowMessage("用户名或密码错误", "提示", MessageBoxButton.OK,window);
             }
         }
         public LoginWindowViewModel()

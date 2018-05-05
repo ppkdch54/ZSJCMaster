@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using FirstFloor.ModernUI.Windows.Controls;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,14 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using ZSJCMaster.DB;
 using ZSJCMaster.Models;
 
 namespace ZSJCMaster.ViewModels
 {
     class AlarmPageViewModel : MainWindowViewModel
     {
-        private AlarmInfo currentItem;
         private AlarmLamp alarmLamp;
+        private AlarmInfoOperator ope;
+        private AlarmInfo currentItem;
 
         /// <summary>
         /// 表格当前项
@@ -43,50 +47,71 @@ namespace ZSJCMaster.ViewModels
             }
         }
 
+
         public AlarmPageViewModel()
         {
             alarmLamp = new AlarmLamp();
+            ope = new AlarmInfoOperator();
             this.AlarmInfos = new ObservableCollection<AlarmInfo>();
             if (App.Current == null) { return; }
             if(this.ControlPads == null)
             {
                 this.ControlPads = ControlPad.GetAllControlPads();
             }
-            ControlPad pad = new ControlPad((AlarmInfo[] info, bool[] flags) =>
+            foreach (var controlpad in this.ControlPads)
             {
-                App.Current.Dispatcher.Invoke(() =>
+                this.Cameras = controlpad.GetCameras();
+                try
                 {
-                    for (int i = 0; i < flags.Length; i++)
+                    ControlPad pad = new ControlPad(controlpad.Id, (AlarmInfo[] info, bool[] flags) =>
                     {
-                        if (!IsEmpty(info[i]))
+                        App.Current.Dispatcher.Invoke(() =>
                         {
-
-                            var controlpad = this.ControlPads.SingleOrDefault(p => p.Id == 1);
-                            if (controlpad != null)
+                            for (int i = 0; i < flags.Length; i++)
                             {
-                                var camera = controlpad.GetCameras(controlpad.Id).SingleOrDefault(c => c.Id == info[i].cameraNo);
-                                info[i].cameraName = camera.Name;
+                                if (!IsEmpty(info[i]))
+                                {
+
+                                    if (controlpad != null)
+                                    {
+                                        var camera = this.Cameras.SingleOrDefault(c => c.Id == info[i].CameraNo);
+                                        if (camera != null)
+                                        {
+                                            info[i].CameraName = camera.Name;
+                                        }
+
+                                    }
+
+                                    AlarmInfos.Add(info[i]);
+                                    //向报警器串口发送命令
+                                    Task.Run(() => {
+                                        alarmLamp.AlarmMusicAndFlash();
+                                        Thread.Sleep(2000);
+                                        alarmLamp.StopAllAlarm();
+                                    });
+
+                                    CurrentItem = info[i];
+                                    //写入数据库
+
+                                    ope.Add(ope.AlarmInfoToAlarmInfoForDB(controlpad.Id, info[i]));
+                                }
                             }
-
-                            AlarmInfos.Add(info[i]);
-                            //向报警器串口发送命令
-                            Task.Run(() => {
-                                alarmLamp.AlarmMusicAndFlash();
-                                Thread.Sleep(2000);
-                                alarmLamp.StopAllAlarm();
-                            });
-
-                            CurrentItem = info[i];
-                        }
-                    }
-                });
-            });
+                        });
+                    });
+                }
+                catch (Exception ex)
+                {
+                    ModernDialog.ShowMessage(ex.Message,"提示",MessageBoxButton.OK);
+                }
+                
+            }
+            
 
         }
 
         private bool IsEmpty(AlarmInfo alarmInfo)
         {
-            if (alarmInfo.cameraNo != 0 || alarmInfo.x != 0 || alarmInfo.y != 0 || alarmInfo.width != 0)
+            if (alarmInfo.CameraNo != 0 || alarmInfo.X != 0 || alarmInfo.Y != 0 || alarmInfo.Width != 0)
             {
                 return false;
             }
@@ -96,4 +121,6 @@ namespace ZSJCMaster.ViewModels
             }
         }
     }
+
+    
 }
