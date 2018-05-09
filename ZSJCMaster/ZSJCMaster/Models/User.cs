@@ -18,9 +18,15 @@ namespace ZSJCMaster.Models
         {
             
         }
-        
+
         public static User GetInstance()
         {
+            return user;
+        }
+        public static User GetAdmin()
+        {
+            user.UserName = "admin";
+            user.Password = "123456";
             return user;
         }
 
