@@ -119,28 +119,30 @@ namespace ZSJCMaster.ViewModels
                                                 });
 
                                             CurrentItem = info[i];
-                                            //写入数据库
 
-                                            ope.Add(ope.AlarmInfoToAlarmInfoForDB(controlpad.Id, info[i]));
                                             //向其他客户机发送报警数据
-                                            if(clients.Count() > 0)
+                                            if (clients.Count() > 0)
                                             {
                                                 foreach (var client in clients)
                                                 {
                                                     string ip = client.Attribute("ip").Value;
                                                     int port = int.Parse(client.Attribute("port").Value);
-                                                    if(ip != serverIP)
+                                                    if (ip != serverIP)
                                                     {
                                                         UdpComm comm = new UdpComm(ip, port);
                                                         XmlSerializer xs = new XmlSerializer(typeof(AlarmInfo));
                                                         var ms = new MemoryStream();
-                                                        xs.Serialize(ms,CurrentItem);
+                                                        xs.Serialize(ms, CurrentItem);
                                                         comm.SendData(ms.ToArray());
                                                         ms.Close();
                                                         ms.Dispose();
                                                     }
                                                 }
                                             }
+                                            //写入数据库
+
+                                            ope.Add(ope.AlarmInfoToAlarmInfoForDB(controlpad.Id, info[i]));
+                                            
                                         }
                                     }
                                 });
