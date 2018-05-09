@@ -135,7 +135,7 @@ namespace ZSJCMaster.ViewModels
                                                         XmlSerializer xs = new XmlSerializer(typeof(AlarmInfo));
                                                         var ms = new MemoryStream();
                                                         xs.Serialize(ms,CurrentItem);
-                                                        comm.SendData(Encoding.ASCII.GetBytes(xs.ToString()));
+                                                        comm.SendData(ms.ToArray());
                                                         ms.Close();
                                                         ms.Dispose();
                                                     }
@@ -172,16 +172,21 @@ namespace ZSJCMaster.ViewModels
                                 Task.Run(() => 
                                 {
                                     UdpComm comm = new UdpComm(port);
-                                    byte[] data = comm.Receive(serverIP, serverPort);
-                                    App.Current.Dispatcher.Invoke(()=> 
+                                    XmlSerializer xs = new XmlSerializer(typeof(AlarmInfo));
+                                    while (true)
                                     {
-                                        XmlSerializer xs = new XmlSerializer(typeof(AlarmInfo));
-                                        var ms = new MemoryStream();
-                                        ms.Read(data, 0, data.Length);
-                                        AlarmInfos.Add(xs.Deserialize(ms) as AlarmInfo);
-                                        ms.Close();
-                                        ms.Dispose();
-                                    });
+                                        byte[] data = comm.Receive(serverIP, serverPort);
+                                        App.Current.Dispatcher.Invoke(() =>
+                                        {
+                                            using (var ms = new MemoryStream())
+                                            {
+                                                ms.Write(data, 0, data.Length);
+                                                ms.Position = 0;
+                                                AlarmInfos.Add(xs.Deserialize(ms) as AlarmInfo);
+                                            }
+                                        });
+                                    }
+                                    
                                 });
                                 break;
                             }
