@@ -228,6 +228,37 @@ namespace ZSJCMaster.Models
         public AlarmInfo[] AlarmInfos { get; set; }
     }
 
+    public class UdpComm
+    {
+        UdpClient client;
+        public UdpComm(int port)
+        {
+            client = new UdpClient(port);
+        }
+        public UdpComm(string ip,int port)
+        {
+            client = new UdpClient(ip, port);
+        }
+
+        public byte[] Receive(string ip,int port)
+        {
+            if(client != null)
+            {
+                var endPoint = new IPEndPoint(IPAddress.Parse(ip),port);
+                byte[] datas = client.Receive(ref endPoint);
+                return datas;
+            }
+            return null;
+        }
+
+        public void SendData(byte[] data)
+        {
+            if(client != null)
+            {
+                client.Send(data, data.Length);
+            }
+        }
+    }
     public class AlarmInfo : BindableBase
     {
         public int CameraNo { get; set; }

@@ -57,7 +57,7 @@ namespace ZSJCMaster.DB
             sql.Append($" limit {(currentPageNum - 1) * pageSize},{pageSize}");
             var result = helper.Query<AlarmInfoForDB>(sql.ToString());
             
-            return result.ToList<AlarmInfoForDB>();
+            return result.ToList();
         }
 
         public int Add(AlarmInfoForDB info)

@@ -26,5 +26,14 @@ namespace ZSJCMaster.Pages
             InitializeComponent();
             this.DataContext = new AlarmPageViewModel();
         }
+
+        private void dgvControlPads_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            var dg = sender as DataGrid;
+            if(dg.Items.Count > 0)
+            {
+                dg.ScrollIntoView(dg.Items[dg.Items.Count - 1]);
+            }
+        }
     }
 }
