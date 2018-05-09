@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml.Linq;
+using ZSJCMaster.DB;
 using ZSJCMaster.Helpers;
 using ZSJCMaster.Models;
 
@@ -155,7 +156,6 @@ namespace ZSJCMaster.ViewModels
 
         }
         #endregion command functions
-
         public MainPageViewModel()
         {
             this.PageLoadedCommand = new DelegateCommand<ExCommandParameter>(PageLoaded);

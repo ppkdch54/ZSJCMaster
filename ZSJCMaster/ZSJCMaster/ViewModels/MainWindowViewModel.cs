@@ -67,7 +67,8 @@ namespace ZSJCMaster.ViewModels
                 if (string.IsNullOrEmpty(user.UserName))
                 {
                     Environment.Exit(0);
-                }else
+                }
+                else
                 {
                     icon = new TaskbarIcon();
                     icon.Visibility = Visibility.Visible;
@@ -76,10 +77,9 @@ namespace ZSJCMaster.ViewModels
                     icon.MenuActivation = PopupActivationMode.RightClick;
                     icon.PopupActivation = PopupActivationMode.DoubleClick;
                     ContextMenu menu = new ContextMenu();
-                    menu.Items.Add(new MenuItem() { Header="显示",Command=ShowCommand });
-                    menu.Items.Add(new MenuItem() { Header="退出",Command=ExitCommand });
+                    menu.Items.Add(new MenuItem() { Header = "显示", Command = ShowCommand });
+                    menu.Items.Add(new MenuItem() { Header = "退出", Command = ExitCommand });
                     icon.ContextMenu = menu;
-                    
                 }
             }
         }
@@ -93,16 +93,17 @@ namespace ZSJCMaster.ViewModels
         {
             if (ModernDialog.ShowMessage("确定要退出吗?", "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                icon.Visibility = Visibility.Hidden;
+                icon.Dispose();
                 Environment.Exit(0);
             }
         }
         public MainWindowViewModel()
         {
-            
             this.WindowLoadedCommand = new DelegateCommand<ExCommandParameter>(WindowLoaded);
             this.ShowCommand = new DelegateCommand(Show);
             this.ExitCommand = new DelegateCommand(Exit);
         }
+
+
     }
 }
