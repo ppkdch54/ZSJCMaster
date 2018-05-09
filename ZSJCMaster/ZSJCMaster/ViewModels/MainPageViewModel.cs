@@ -113,7 +113,12 @@ namespace ZSJCMaster.ViewModels
             }
             catch (Exception ex)
             {
-                ModernDialog.ShowMessage(ex.Message,"提示",MessageBoxButton.OK);
+                App.Current.Dispatcher.Invoke(()=> 
+                {
+                    camera.IsSwitching = false;
+                    ModernDialog.ShowMessage(ex.Message, "提示", MessageBoxButton.OK);
+                });
+                
             }
             
         }
