@@ -6,8 +6,40 @@
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:helper="clr-namespace:ZSJCMaster.Helpers"
+             xmlns:validation="clr-namespace:ZSJCMaster.Validations"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="350">
+             d:DesignHeight="800" d:DesignWidth="350">
+    <UserControl.Resources>
+        <Style x:Key="contentCenterStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="btnFIcon" TargetType="Button">
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#iconfont" />
+            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+            <Setter Property="FontSize" Value="20"></Setter>
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border BorderThickness="0">
+                            <ContentPresenter Content="{TemplateBinding Button.Content}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <Grid Style="{StaticResource ContentRoot}">
         <Grid.Resources>
             <Style TargetType="TextBlock">
@@ -17,65 +49,189 @@
         </Grid.Resources>
         <ScrollViewer>
             <StackPanel MinWidth="200">
-                <TextBlock Text="串口设置" Style="{StaticResource Heading2}" />
-                <Grid Margin="10" Width="300" HorizontalAlignment="Left">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Text="端口:"/>
-                    <ComboBox x:Name="cboPortNums" Grid.Column="1" ItemsSource="{Binding PortList}" SelectedItem="{Binding PortName}" Tag="PortName" 
+                <StackPanel>
+                    <TextBlock Text="串口设置" Style="{StaticResource Heading2}" />
+                    <Grid Margin="10" Width="300" HorizontalAlignment="Left">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Text="端口:"/>
+                        <ComboBox x:Name="cboPortNums" Grid.Column="1" ItemsSource="{Binding PortList}" SelectedItem="{Binding PortName}" Tag="PortName" 
                               DisplayMemberPath="DisplayName" SelectedValuePath="Value">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboPortNums}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <TextBlock Grid.Row="1" Text="波特率:"/>
-                    <ComboBox x:Name="cboBaudRates" Grid.Row="1" Grid.Column="1" SelectedItem="{Binding BaudRate}" ItemsSource="{Binding BaudRateList}" Tag="BaudRate" 
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboPortNums}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <TextBlock Grid.Row="1" Text="波特率:"/>
+                        <ComboBox x:Name="cboBaudRates" Grid.Row="1" Grid.Column="1" SelectedItem="{Binding BaudRate}" ItemsSource="{Binding BaudRateList}" Tag="BaudRate" 
                               DisplayMemberPath="DisplayName" SelectedValuePath="Value">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboBaudRates}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <TextBlock Grid.Row="2" Text="数据位:"/>
-                    <ComboBox x:Name="cboDataBits" Grid.Row="2" Grid.Column="1" SelectedItem="{Binding DataBits}" ItemsSource="{Binding DataBitList}" Tag="DataBits"
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboBaudRates}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <TextBlock Grid.Row="2" Text="数据位:"/>
+                        <ComboBox x:Name="cboDataBits" Grid.Row="2" Grid.Column="1" SelectedItem="{Binding DataBits}" ItemsSource="{Binding DataBitList}" Tag="DataBits"
                               DisplayMemberPath="DisplayName" SelectedValuePath="Value">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboDataBits}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <TextBlock Grid.Row="3" Text="校验位:"/>
-                    <ComboBox x:Name="cboParity" Grid.Row="3" Grid.Column="1" SelectedItem="{Binding Parity}" ItemsSource="{Binding ParityList}" Tag="Parity"
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboDataBits}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <TextBlock Grid.Row="3" Text="校验位:"/>
+                        <ComboBox x:Name="cboParity" Grid.Row="3" Grid.Column="1" SelectedItem="{Binding Parity}" ItemsSource="{Binding ParityList}" Tag="Parity"
                               DisplayMemberPath="DisplayName" SelectedValuePath="Value">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboParity}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <TextBlock Grid.Row="4" Text="停止位:"/>
-                    <ComboBox x:Name="cboStopBits" Grid.Row="4" Grid.Column="1" SelectedItem="{Binding StopBits}" ItemsSource="{Binding StopBitList}" Tag="StopBits"
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboParity}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <TextBlock Grid.Row="4" Text="停止位:"/>
+                        <ComboBox x:Name="cboStopBits" Grid.Row="4" Grid.Column="1" SelectedItem="{Binding StopBits}" ItemsSource="{Binding StopBitList}" Tag="StopBits"
                               DisplayMemberPath="DisplayName" SelectedValuePath="Value">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboStopBits}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                </Grid>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <helper:ExInvokeCommandAction Command="{Binding ChangeSerialPortParamsCommand}" CommandParameter="{Binding ElementName=cboStopBits}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                    </Grid>
+                </StackPanel>
+                <StackPanel Margin="0 10 0 0">
+                    <TextBlock Text="传输设置" Style="{StaticResource Heading2}" />
+                    <Grid Width="300" Margin="10" HorizontalAlignment="Left">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="主上位机IP:"/>
+                        <TextBox x:Name="txtUDPServerIP" Grid.Column="1" VerticalContentAlignment="Center" Tag="ip">
+                            <TextBox.Text>
+                                <Binding Path="UDPServer.IP" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
+                                    <Binding.ValidationRules>
+                                        <ExceptionValidationRule></ExceptionValidationRule>
+                                        <validation:RequiredRule></validation:RequiredRule>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="TextChanged">
+                                    <helper:ExInvokeCommandAction Command="{Binding ChangeUDPServerParamsCommand}" CommandParameter="{Binding ElementName=txtUDPServerIP}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBlock Text="端口:" Grid.Row="1"/>
+                        <TextBox Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" Tag="port">
+                            <TextBox.Text>
+                                <Binding Path="UDPServer.Port" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
+                                    <Binding.ValidationRules>
+                                        <ExceptionValidationRule></ExceptionValidationRule>
+                                        <validation:RequiredRule></validation:RequiredRule>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="TextChanged">
+                                    <helper:ExInvokeCommandAction Command="{Binding ChangeUDPServerParamsCommand}" CommandParameter="{Binding ElementName=txtUDPServerIP}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBlock Text="其他上位机:" Grid.Row="2"/>
+                        <Button x:Name="btnAddClient" Grid.Row="2" Grid.Column="1" Command="{Binding AddNewClientCommand}" FontSize="13" Cursor="Hand"
+                        VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="5 0">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Border>
+                                        <Label Content="{TemplateBinding Button.Content}" Foreground="{TemplateBinding Button.Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xe6a3;">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#iconfont" />
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Text="增加"/>
+                            </StackPanel>
+                        </Button>
+                        <DataGrid x:Name="dgvClients" Grid.Row="3" Grid.ColumnSpan="2" Margin="0 10" 
+                      ItemsSource="{Binding Clients}" AutoGenerateColumns="False" 
+                      CanUserAddRows="False" SelectionMode="Single" >
+                            <DataGrid.Columns>
+                                <mui:DataGridTextColumn Width="25" Binding="{Binding Id}" IsReadOnly="True" ElementStyle="{StaticResource contentCenterStyle}"/>
+                                <mui:DataGridTextColumn Header="IP" Width="140" ElementStyle="{StaticResource contentCenterStyle}">
+                                    <mui:DataGridTextColumn.Binding>
+                                        <Binding Path="IP" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
+                                            <Binding.ValidationRules>
+                                                <ExceptionValidationRule></ExceptionValidationRule>
+                                                <validation:RequiredRule ></validation:RequiredRule>
+                                                <validation:IPv4Rule></validation:IPv4Rule>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </mui:DataGridTextColumn.Binding>
+                                </mui:DataGridTextColumn>
+                                <mui:DataGridTextColumn Header="TCP端口" ElementStyle="{StaticResource contentCenterStyle}">
+                                    <mui:DataGridTextColumn.Binding>
+                                        <Binding Path="Port" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnDataErrors="True">
+                                            <Binding.ValidationRules>
+                                                <ExceptionValidationRule></ExceptionValidationRule>
+                                                <validation:RequiredRule></validation:RequiredRule>
+                                                <validation:PortRule></validation:PortRule>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </mui:DataGridTextColumn.Binding>
+                                </mui:DataGridTextColumn>
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button x:Name="btnDeleteClient" Tag="{Binding Id}" Content="&#xe613;" ToolTip="删除" Style="{StaticResource btnFIcon}">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="Click">
+                                                            <helper:ExInvokeCommandAction Command="{Binding DataContext.DeleteClientCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=UserControl}}" CommandParameter="{Binding ElementName=btnDeleteClient}"/>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="BeginningEdit">
+                                    <helper:ExInvokeCommandAction Command="{Binding BeginningEditCommand}" CommandParameter="{Binding ElementName=dgvClients}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="RowEditEnding">
+                                    <helper:ExInvokeCommandAction Command="{Binding RowEditEndingCommand}" CommandParameter="{Binding ElementName=dgvClients}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </DataGrid>
+                    </Grid>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

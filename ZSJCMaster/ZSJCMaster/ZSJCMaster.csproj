@@ -149,6 +149,7 @@
     <Compile Include="Models\Camera.cs" />
     <Compile Include="Models\Comm.cs" />
     <Compile Include="Models\ControlPad.cs" />
+    <Compile Include="Models\UDPHost.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Pages\AlarmPage.xaml.cs">
       <DependentUpon>AlarmPage.xaml</DependentUpon>

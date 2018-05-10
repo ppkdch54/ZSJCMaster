@@ -99,6 +99,7 @@ namespace ZSJCMaster.ViewModels
         {
             if (ModernDialog.ShowMessage("确定要退出吗?", "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
+                icon.Visibility = Visibility.Collapsed;
                 icon.Dispose();
                 Environment.Exit(0);
             }
