@@ -133,6 +133,20 @@ namespace ZSJCMaster.Models
             }
         }
 
+        private bool isDownloadingImage;
+
+        /// <summary>
+        /// 是否正在采集图片
+        /// </summary>
+        public bool IsDownloadingImage
+        {
+            get { return isDownloadingImage; }
+            set
+            {
+                isDownloadingImage = value;
+                this.RaisePropertyChanged("IsDownloadingImage");
+            }
+        }
 
 
         public Camera()

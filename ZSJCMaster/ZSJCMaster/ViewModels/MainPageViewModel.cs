@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,7 +23,6 @@ namespace ZSJCMaster.ViewModels
     class MainPageViewModel: MainWindowViewModel
     {
         private ControlPad currentPad;  //当前选中的控制板
-
         #region commands
         public DelegateCommand<ExCommandParameter> PageLoadedCommand { get; set; }
         public DelegateCommand<ExCommandParameter> ComboBoxSelectChangedCommand { get; set; }
@@ -125,6 +125,14 @@ namespace ZSJCMaster.ViewModels
 
         private void RemoteDesktop(ExCommandParameter param)
         {
+            //判断是否正在采集图片，如果采集，直接返回
+            foreach (var camera in this.Cameras)
+            {
+                if(camera.IsDownloadingImage)
+                {
+                    return;
+                }
+            }
             try
             {   //先切换网口
                 int no = 0;
@@ -140,8 +148,7 @@ namespace ZSJCMaster.ViewModels
                     var sender = param.Sender as MenuItem;
                     no = int.Parse(sender.Tag.ToString());
                     if (this.currentPad == null) { return; }
-                    camera = this.currentPad.Cameras.SingleOrDefault(c => c.Id == no);
-                    
+                    camera = this.currentPad.Cameras.SingleOrDefault(c => c.Id == no);         
                 }
                 if (camera == null) { return; }
                 Task.Run(()=> 
@@ -150,13 +157,71 @@ namespace ZSJCMaster.ViewModels
                     SwitchCameraNetPort(camera);
                     System.Threading.Thread.Sleep(3000);
                     camera.IsSwitching = false;
+                    Task.Run(() =>
+                    {
+                        try
+                        {
+                            //从下位机获取图片
+                            string root = "\\\\" + camera.IP + "\\Alarm_Pic";
+                            DateTime now = DateTime.Now;
+                            DateTime yesterday = now.AddDays(-1);
+                            yesterday = now;
+                            string picDir = Path.Combine(root, "pic_" + yesterday.ToString("yyyy_MM_dd"));
+                            if (Directory.Exists(picDir))
+                            {
+                                //采集图片
+                                camera.IsDownloadingImage = true;
+                                string[] dirs = Directory.GetDirectories(picDir);
+                                foreach (var dir in dirs)
+                                {
+                                    if(dir.EndsWith($"下位机_{camera.Id}_报警截图"))
+                                    {
+                                        string[] images = Directory.GetFiles(dir, "*.jpg");
+                                        foreach (var img in images)
+                                        {
+                                            string parentDir = Path.GetDirectoryName(img);
+                                            string rootDir = Path.GetPathRoot(parentDir);
+                                            picDir = parentDir.Substring(parentDir.IndexOf(rootDir)+1 + rootDir.Length);
+                                            string localPath = Path.Combine("C:\\AlarmPics\\", picDir);
+                                            if (!Directory.Exists(localPath))
+                                            {
+                                                Directory.CreateDirectory(localPath);
+                                            }
+                                            string localImg = Path.Combine(localPath, Path.GetFileName(img));
+                                            if (!File.Exists(localImg))
+                                            {
+                                                File.Copy(img, localImg);
+                                            }
+                                            
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                            
+                        }
+                        catch (Exception ex)
+                        {
+                            App.Current.Dispatcher.Invoke(()=> 
+                            {
+                                ModernDialog.ShowMessage(ex.Message, "提示", MessageBoxButton.OK);
+                            });
+                        }
+                        finally
+                        {
+                            camera.IsDownloadingImage = false;
+                        }
+                    });
                     //启动远程桌面
                     Process p = Process.Start("mstsc.exe");
                 });
             }
             catch (Exception ex)
             {
-                ModernDialog.ShowMessage(ex.Message,"提示",MessageBoxButton.OK);
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    ModernDialog.ShowMessage(ex.Message, "提示", MessageBoxButton.OK);
+                });
             }
 
         }

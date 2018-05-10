@@ -142,6 +142,7 @@
     </Compile>
     <Compile Include="Converters\CameraConverter.cs" />
     <Compile Include="Converters\CameraSwitchConverter.cs" />
+    <Compile Include="Converters\DownloadImageConverter.cs" />
     <Compile Include="DB\AlarmInfoOperator.cs" />
     <Compile Include="Helpers\ExCommandParameter.cs" />
     <Compile Include="Helpers\ExInvokeCommandAction.cs" />

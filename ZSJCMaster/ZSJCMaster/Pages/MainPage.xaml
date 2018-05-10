@@ -18,6 +18,7 @@
     <UserControl.Resources>
         <converter:CameraConverter x:Key="cameraConverter"/>
         <converter:CameraSwitchConverter x:Key="cameraSwitchConverter"/>
+        <converter:DownloadImageConverter x:Key="downloadImageConverter"/>
         <Style x:Key="FIcon" TargetType="TextBlock">
             <Setter Property="TextElement.FontFamily" Value="pack://application:,,,/Fonts/#iconfont" />
             <Setter Property="TextBlock.TextAlignment" Value="Center"></Setter>
@@ -122,6 +123,7 @@
                             </Button>
                             <Button Content="&#xe606;" ToolTip="开启检测" Style="{StaticResource btnFIcon}" Grid.RowSpan="2" Grid.Column="3"/>
                             <TextBlock Text="{Binding IsSwitching,Converter={StaticResource cameraSwitchConverter}}" Margin="10 0 0 0" Grid.RowSpan="2" Grid.Column="4" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding IsDownloadingImage,Converter={StaticResource downloadImageConverter}}" Margin="10 0 0 0" Grid.RowSpan="2" Grid.Column="4" VerticalAlignment="Center" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

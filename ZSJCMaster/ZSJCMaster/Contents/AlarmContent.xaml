@@ -231,6 +231,7 @@
                             </i:Interaction.Triggers>
                         </DataGrid>
                     </Grid>
+                    <TextBlock Text="*传输设置重启软件后生效" Foreground="OrangeRed" HorizontalAlignment="Left" Margin="10 0 0 0"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
