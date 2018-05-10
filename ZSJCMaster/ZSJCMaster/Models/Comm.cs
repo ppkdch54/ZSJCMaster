@@ -196,9 +196,9 @@ namespace ZSJCMaster.Models
                                 AlarmFlags[k] = (bytes[k + 1] == 1);
                                 AlarmInfos[k] = new AlarmInfo();
                                 //AlarmInfos[k].cameraNo = bytes[k * 4 + offset];
-                                AlarmInfos[k].CameraNo = bytes[k + 1] == 1 ? 6 - k - 1 : 0;
-                                AlarmInfos[k].X = bytes[k * 4 + 1 + offset];
-                                AlarmInfos[k].Y = bytes[k * 4 + 2 + offset];
+                                AlarmInfos[k].X = bytes[k * 4 + offset];
+                                AlarmInfos[k].Y = bytes[k * 4 + 1 + offset];
+                                AlarmInfos[k].CameraNo = bytes[k * 4 + 2 + offset];
                                 AlarmInfos[k].Width = bytes[k * 4 + 3 + offset];
                                 AlarmInfos[k].InfoTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                             }
