@@ -23,6 +23,7 @@ namespace ZSJCMaster.ViewModels
     class MainPageViewModel: MainWindowViewModel
     {
         private ControlPad currentPad;  //当前选中的控制板
+        private string copyImagePath;
         #region commands
         public DelegateCommand<ExCommandParameter> PageLoadedCommand { get; set; }
         public DelegateCommand<ExCommandParameter> ComboBoxSelectChangedCommand { get; set; }
@@ -39,6 +40,10 @@ namespace ZSJCMaster.ViewModels
             var cboControlPads = sender.FindName("cboControlPads") as ComboBox;
             this.ControlPads = ControlPad.GetAllControlPads();
             this.Cameras = null;
+
+            XDocument doc = XDocument.Load("Application.config");
+            var path = doc.Descendants("copyImagePath").Single();
+            this.copyImagePath = path.Attribute("path").Value;
         }
         private void ComboBoxSelectChanged(ExCommandParameter param)
         {
@@ -125,14 +130,6 @@ namespace ZSJCMaster.ViewModels
 
         private void RemoteDesktop(ExCommandParameter param)
         {
-            //判断是否正在采集图片，如果采集，直接返回
-            foreach (var camera in this.Cameras)
-            {
-                if(camera.IsDownloadingImage)
-                {
-                    return;
-                }
-            }
             try
             {   //先切换网口
                 int no = 0;
@@ -176,23 +173,27 @@ namespace ZSJCMaster.ViewModels
                                 {
                                     if(dir.EndsWith($"下位机_{camera.Id}_报警截图"))
                                     {
-                                        string[] images = Directory.GetFiles(dir, "*.jpg");
-                                        foreach (var img in images)
+                                        while(true)
                                         {
-                                            string parentDir = Path.GetDirectoryName(img);
-                                            string rootDir = Path.GetPathRoot(parentDir);
-                                            picDir = parentDir.Substring(parentDir.IndexOf(rootDir)+1 + rootDir.Length);
-                                            string localPath = Path.Combine("C:\\AlarmPics\\", picDir);
-                                            if (!Directory.Exists(localPath))
+                                            string[] images = Directory.GetFiles(dir, "*.jpg");
+                                            foreach (var img in images)
                                             {
-                                                Directory.CreateDirectory(localPath);
+                                                string parentDir = Path.GetDirectoryName(img);
+                                                string rootDir = Path.GetPathRoot(parentDir);
+                                                picDir = parentDir.Substring(parentDir.IndexOf(rootDir) + 1 + rootDir.Length);
+                                                string localPath = Path.Combine(this.copyImagePath, picDir);
+                                                if (!Directory.Exists(localPath))
+                                                {
+                                                    Directory.CreateDirectory(localPath);
+                                                }
+                                                string localImg = Path.Combine(localPath, Path.GetFileName(img));
+                                                if (!File.Exists(localImg))
+                                                {
+                                                    File.Copy(img, localImg);
+                                                }
+
                                             }
-                                            string localImg = Path.Combine(localPath, Path.GetFileName(img));
-                                            if (!File.Exists(localImg))
-                                            {
-                                                File.Copy(img, localImg);
-                                            }
-                                            
+                                            Thread.Sleep(2000);
                                         }
                                     }
                                     
@@ -202,15 +203,13 @@ namespace ZSJCMaster.ViewModels
                         }
                         catch (Exception ex)
                         {
-                            App.Current.Dispatcher.Invoke(()=> 
+                            App.Current.Dispatcher.Invoke(() =>
                             {
-                                ModernDialog.ShowMessage(ex.Message, "提示", MessageBoxButton.OK);
+                                ModernDialog.ShowMessage(ex.Message+",图片采集已中止", "提示", MessageBoxButton.OK);
                             });
+
                         }
-                        finally
-                        {
-                            camera.IsDownloadingImage = false;
-                        }
+                        
                     });
                     //启动远程桌面
                     Process p = Process.Start("mstsc.exe");

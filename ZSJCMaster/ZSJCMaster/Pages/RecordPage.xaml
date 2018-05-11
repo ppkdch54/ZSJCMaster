@@ -62,7 +62,7 @@
                 <!--<ProgressBar Minimum="0" Maximum="1" Height="16" IsIndeterminate="True" Margin="0,0,0,16"/>-->
                 <mui:ModernProgressRing IsActive="True" Width="80" Height="80" Style="{Binding SelectedItem.Tag, ElementName=CmbRingStyle}" />
             </StackPanel>
-            <ListView Grid.Row="1" ItemsSource="{Binding AlarmInfoList}">
+            <ListView x:Name="lvRecords" Grid.Row="1" ItemsSource="{Binding AlarmInfoList}">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="100"/>
@@ -73,6 +73,11 @@
                         <GridViewColumn Header="时间" DisplayMemberBinding="{Binding InfoTime,StringFormat={}{0:yyyy-MM-dd HH:mm:ss }}" Width="180"/>
                     </GridView>
                 </ListView.View>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <helper:ExInvokeCommandAction Command="{Binding ShowAlarmPicCommand}" CommandParameter="{Binding ElementName=lvRecords}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </ListView>
             <DockPanel Grid.Row="2" Height="30" LastChildFill="True">
                 <WrapPanel Grid.Row="2" Height="30" HorizontalAlignment="Right" DockPanel.Dock="Right">

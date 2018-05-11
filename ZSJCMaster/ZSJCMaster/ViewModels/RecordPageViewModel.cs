@@ -2,11 +2,14 @@
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Linq;
 using ZSJCMaster.DB;
 using ZSJCMaster.Helpers;
 using ZSJCMaster.Models;
@@ -17,6 +20,7 @@ namespace ZSJCMaster.ViewModels
     {
         private bool hasChangedPageSize = false;
         private int currentPageSize;
+        private string alarmImagePath;
         #region 属性
         private ControlPad currentControlPad;
         /// <summary>
@@ -224,6 +228,7 @@ namespace ZSJCMaster.ViewModels
         public DelegateCommand PrevPageCommand { get; set; }
         public DelegateCommand NextPageCommand { get; set; }
         public DelegateCommand<ExCommandParameter> ChangePageSizeCommand {get;set;}
+        public DelegateCommand<ExCommandParameter> ShowAlarmPicCommand { get; set; }
         #endregion
 
         #region command function
@@ -333,6 +338,51 @@ namespace ZSJCMaster.ViewModels
         {
             hasChangedPageSize = true;
         }
+        private void ShowAlarmPic(ExCommandParameter param)
+        {
+            var listview = param.Sender as ListView;
+            if(listview.SelectedItems.Count > 0)
+            {
+                var info = listview.SelectedItem as AlarmInfoForDB;
+                //建立新的系统进程      
+                System.Diagnostics.Process process = new System.Diagnostics.Process();
+
+                //设置图片的真实路径和文件名
+                int year = info.InfoTime.Year;
+                int month = info.InfoTime.Month;
+                int day = info.InfoTime.Day;
+                int hour = info.InfoTime.Hour;
+                int minute = info.InfoTime.Minute;
+                int second = info.InfoTime.Second;
+                string picPath = Path.Combine(this.alarmImagePath, $"pic_{year}_{month.ToString().PadLeft(2,'0')}_{day.ToString().PadLeft(2,'0')}", 
+                                    $"下位机_{info.CameraId}_报警截图", 
+                                    $"{hour.ToString().PadLeft(2, '0')}_{minute.ToString().PadLeft(2, '0')}_{second.ToString().PadLeft(2, '0')}_AlarmPic.jpg");
+                if (!File.Exists(picPath)) { return; }
+                try
+                {
+                    process.StartInfo.FileName = picPath;
+
+                    //设置进程运行参数，这里以最大化窗口方法显示图片。      
+                    process.StartInfo.Arguments = "rundl132.exe C://WINDOWS//system32//shimgvw.dll,ImageView_Fullscreen";
+
+                    //此项为是否使用Shell执行程序，因系统默认为true，此项也可不设，但若设置必须为true      
+                    process.StartInfo.UseShellExecute = true;
+
+                    //此处可以更改进程所打开窗体的显示样式，可以不设      
+                    //process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                    process.Start();
+                    process.Close();
+                }
+                catch (Exception ex)
+                {
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        ModernDialog.ShowMessage(ex.Message, "提示", MessageBoxButton.OK);
+                    });
+                }
+                
+            }
+        }
         #endregion
         public RecordPageViewModel()
         {
@@ -351,6 +401,11 @@ namespace ZSJCMaster.ViewModels
             this.PrevPageCommand = new DelegateCommand(PrevPage);
             this.NextPageCommand = new DelegateCommand(NextPage);
             this.ChangePageSizeCommand = new DelegateCommand<ExCommandParameter>(ChangePageSize);
+            this.ShowAlarmPicCommand = new DelegateCommand<ExCommandParameter>(ShowAlarmPic);
+
+            XDocument doc = XDocument.Load("Application.config");
+            var path = doc.Descendants("copyImagePath").Single();
+            this.alarmImagePath = path.Attribute("path").Value;
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Xml.Linq;
 using ZSJCMaster.Helpers;
 using ZSJCMaster.Models;
 
@@ -16,6 +17,7 @@ namespace ZSJCMaster.ViewModels
     class AlarmContentViewModel:SettingPageViewModel
     {
         public UDPHost CurrentUDPClient { get; set; }
+
         #region 属性
         /// <summary>
         /// 串口号列表
@@ -187,6 +189,20 @@ namespace ZSJCMaster.ViewModels
             }
         }
 
+        private string copyImagePath;
+
+        /// <summary>
+        /// 报警图片采集路径
+        /// </summary>
+        public string CopyImagePath
+        {
+            get { return copyImagePath; }
+            set
+            {
+                copyImagePath = value;
+                this.RaisePropertyChanged("CopyImagePath");
+            }
+        }
 
 
         #endregion
@@ -197,6 +213,8 @@ namespace ZSJCMaster.ViewModels
         public DelegateCommand<ExCommandParameter> RowEditEndingCommand { get; set; }
         public DelegateCommand<ExCommandParameter> DeleteClientCommand { get; set; }
         public DelegateCommand AddNewClientCommand { get; set; }
+        public DelegateCommand BrowseDirCommand { get; set; }
+        public DelegateCommand<ExCommandParameter> ChangeCopyImagePathCommand { get; set; }
         #endregion
         #region command function
         private void ChangeSerialPortsParam(ExCommandParameter param)
@@ -264,6 +282,24 @@ namespace ZSJCMaster.ViewModels
             this.Clients.Add(client);
             //保存到配置文件
             UDPHost.AddClient(client);
+        }
+
+        private void BrowseDir()
+        {
+            System.Windows.Forms.FolderBrowserDialog folderDlg = new System.Windows.Forms.FolderBrowserDialog();
+            folderDlg.Description = "请选择报警图片采集目录";
+            folderDlg.ShowNewFolderButton = true;
+            folderDlg.RootFolder = Environment.SpecialFolder.Desktop;
+            folderDlg.ShowDialog();
+            this.CopyImagePath = folderDlg.SelectedPath;
+        }
+
+        private void ChangeCopyImagePath(ExCommandParameter param)
+        {
+            XDocument doc = XDocument.Load("Application.config");
+            var path = doc.Descendants("copyImagePath").Single();
+            path.SetAttributeValue("path", this.CopyImagePath);
+            doc.Save("Application.config");
         }
         #endregion
         #region method
@@ -368,6 +404,10 @@ namespace ZSJCMaster.ViewModels
             this.Parity = ParityList.SingleOrDefault(p => (Parity)p.Value == comm.Parity);
             this.DataBits = DataBitList.SingleOrDefault(d => (int)d.Value == comm.DataBits);
             this.StopBits = StopBitList.SingleOrDefault(s => (StopBits)s.Value == comm.StopBits);
+            //CopyImagePath
+            XDocument doc = XDocument.Load("Application.config");
+            var path = doc.Descendants("copyImagePath").Single();
+            this.CopyImagePath = path.Attribute("path").Value;
             //UDP
             this.UDPServer = UDPServer.GetServerFromConfig();
             //Clients
@@ -378,6 +418,8 @@ namespace ZSJCMaster.ViewModels
             this.RowEditEndingCommand = new DelegateCommand<ExCommandParameter>(RowEditEnding);
             this.DeleteClientCommand = new DelegateCommand<ExCommandParameter>(DeleteClient);
             this.AddNewClientCommand = new DelegateCommand(AddNewClient);
+            this.BrowseDirCommand = new DelegateCommand(BrowseDir);
+            this.ChangeCopyImagePathCommand = new DelegateCommand<ExCommandParameter>(ChangeCopyImagePath);
         }
     }
 

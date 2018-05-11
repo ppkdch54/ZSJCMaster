@@ -23,7 +23,8 @@
         <ScrollViewer VerticalAlignment="Stretch" Margin="0 -10 0 0" Grid.Row="1">
             <DataGrid x:Name="dgvControlPads" Grid.Row="1" Margin="0 10" 
                       ItemsSource="{Binding AlarmInfos}" AutoGenerateColumns="False" 
-                      CanUserAddRows="False" SelectionMode="Single" SelectedItem="{Binding CurrentItem}" ScrollViewer.ScrollChanged="dgvControlPads_ScrollChanged">
+                      CanUserAddRows="False" SelectionMode="Single" SelectedItem="{Binding CurrentItem}" 
+                      ScrollViewer.ScrollChanged="dgvControlPads_ScrollChanged">
                 <DataGrid.Columns>
                     <mui:DataGridTextColumn Width="30" Binding="{Binding Id}" IsReadOnly="True" ElementStyle="{StaticResource contentCenterStyle}"/>
                     <mui:DataGridTextColumn Header="相机" Width="100" Binding="{Binding CameraNo}" ElementStyle="{StaticResource contentCenterStyle}"/>

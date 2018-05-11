@@ -111,6 +111,29 @@
                     </Grid>
                 </StackPanel>
                 <StackPanel Margin="0 10 0 0">
+                    <TextBlock Text="图像存储设置" Style="{StaticResource Heading2}" />
+                    <StackPanel>
+                        <TextBlock Text="报警图片采集路径:" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtCopyImagePath" Height="25" VerticalContentAlignment="Center">
+                            <TextBox.Text>
+                                <Binding Path="CopyImagePath" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
+                                    <Binding.ValidationRules>
+                                        <ExceptionValidationRule></ExceptionValidationRule>
+                                        <validation:RequiredRule></validation:RequiredRule>
+                                        <validation:PathRule></validation:PathRule>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="TextChanged">
+                                    <helper:ExInvokeCommandAction Command="{Binding ChangeCopyImagePathCommand}" CommandParameter="{Binding ElementName=txtCopyImagePath}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <Button Content="选择..." Width="100" HorizontalAlignment="Right" Command="{Binding BrowseDirCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="0 10 0 0">
                     <TextBlock Text="传输设置" Style="{StaticResource Heading2}" />
                     <Grid Width="300" Margin="10" HorizontalAlignment="Left">
                         <Grid.RowDefinitions>
