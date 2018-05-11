@@ -173,6 +173,7 @@ namespace ZSJCMaster.ViewModels
                                 {
                                     if(dir.EndsWith($"下位机_{camera.Id}_报警截图"))
                                     {
+                                        camera.IsDownloadingImage = true;
                                         while(true)
                                         {
                                             string[] images = Directory.GetFiles(dir, "*.jpg");
@@ -208,6 +209,10 @@ namespace ZSJCMaster.ViewModels
                                 ModernDialog.ShowMessage(ex.Message+",图片采集已中止", "提示", MessageBoxButton.OK);
                             });
 
+                        }
+                        finally
+                        {
+                            camera.IsDownloadingImage = false;
                         }
                         
                     });
