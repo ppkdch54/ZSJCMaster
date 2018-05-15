@@ -16,7 +16,7 @@ namespace ZSJCMaster.Models
 {
     public class ControlPad: BindableBase
     {
-        TcpComm tcpComm;
+        static TcpComm tcpComm;
         byte[] command;
 
         #region 属性
@@ -106,7 +106,10 @@ namespace ZSJCMaster.Models
                 //读取参数
                 LoadPara(controlpadId);
                 //初始化TCP连接
-                tcpComm = new TcpComm(IP, PortNum, tcpRecv);
+                if (tcpComm==null)
+                {
+                    tcpComm = new TcpComm(IP, PortNum, tcpRecv);
+                }
                 Task.Run(() =>
                 {
                     while (true)
