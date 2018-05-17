@@ -109,7 +109,12 @@ namespace ZSJCMaster.ViewModels
                                                 }
 
                                             }
-                                            AlarmInfos.Add(info[i]);
+                                            AlarmInfos.Insert(0,info[i]);
+                                            //始终保持界面上的报警记录不得多于50条
+                                            if(AlarmInfos.Count == 50+1)
+                                            {
+                                                AlarmInfos.RemoveAt(AlarmInfos.Count - 1);
+                                            }
                                             //向报警器串口发送命令
                                             Task.Run(() =>
                                                 {

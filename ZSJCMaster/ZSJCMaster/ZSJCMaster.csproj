@@ -50,6 +50,9 @@
   <PropertyGroup>
     <ApplicationIcon>ddckUI.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.1.50.2\lib\net45\Dapper.dll</HintPath>
@@ -144,6 +147,7 @@
     <Compile Include="Converters\CameraSwitchConverter.cs" />
     <Compile Include="Converters\DownloadImageConverter.cs" />
     <Compile Include="DB\AlarmInfoOperator.cs" />
+    <Compile Include="Helpers\SharedTool.cs" />
     <Compile Include="Helpers\ExCommandParameter.cs" />
     <Compile Include="Helpers\ExInvokeCommandAction.cs" />
     <Compile Include="Helpers\MySQLHelper.cs" />
@@ -180,11 +184,15 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\RecordPageViewModel.cs" />
     <Compile Include="ViewModels\SettingPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupWizardWindowViewModel.cs" />
     <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupWizardWindow.xaml.cs">
+      <DependentUpon>SetupWizardWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +220,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Resource Include="Fonts\iconfont.ttf" />
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -262,6 +271,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SetupWizardWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

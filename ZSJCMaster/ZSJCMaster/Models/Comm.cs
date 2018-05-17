@@ -71,9 +71,12 @@ namespace ZSJCMaster.Models
 
         public void InitialSerial()
         {
-            serial = new SerialPort(PortName, BaudRate, Parity, DataBits, StopBits);
-            serial.ReceivedBytesThreshold = 4;//设置 DataReceived 事件发生前内部输入缓冲区中的字节数
-            Open();
+            if(portName != "None")
+            {
+                serial = new SerialPort(PortName, BaudRate, Parity, DataBits, StopBits);
+                serial.ReceivedBytesThreshold = 4;//设置 DataReceived 事件发生前内部输入缓冲区中的字节数
+                Open();
+            } 
         }
 
         ~SerialComm()

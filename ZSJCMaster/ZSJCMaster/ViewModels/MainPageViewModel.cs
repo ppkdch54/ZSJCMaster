@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -164,17 +165,17 @@ namespace ZSJCMaster.ViewModels
                             DateTime yesterday = now.AddDays(-1);
                             yesterday = now;
                             string picDir = Path.Combine(root, "pic_" + yesterday.ToString("yyyy_MM_dd"));
-                            if (Directory.Exists(picDir))
+                            using (SharedTool tool = new SharedTool("Admin", "",camera.IP))
                             {
                                 //采集图片
                                 camera.IsDownloadingImage = true;
                                 string[] dirs = Directory.GetDirectories(picDir);
                                 foreach (var dir in dirs)
                                 {
-                                    if(dir.EndsWith($"下位机_{camera.Id}_报警截图"))
+                                    if(Path.GetFileName(dir).StartsWith("下位机")&& dir.EndsWith("报警截图"))
                                     {
                                         camera.IsDownloadingImage = true;
-                                        while(true)
+                                        while (true)
                                         {
                                             string[] images = Directory.GetFiles(dir, "*.jpg");
                                             foreach (var img in images)
@@ -197,16 +198,15 @@ namespace ZSJCMaster.ViewModels
                                             Thread.Sleep(2000);
                                         }
                                     }
-                                    
+
                                 }
                             }
-                            
                         }
                         catch (Exception ex)
                         {
                             App.Current.Dispatcher.Invoke(() =>
                             {
-                                ModernDialog.ShowMessage(ex.Message+",图片采集已中止", "提示", MessageBoxButton.OK);
+                                ModernDialog.ShowMessage(ex.Message+",图片采集已中止！", "提示", MessageBoxButton.OK);
                             });
 
                         }
@@ -229,6 +229,7 @@ namespace ZSJCMaster.ViewModels
             }
 
         }
+
         #endregion command functions
         public MainPageViewModel()
         {

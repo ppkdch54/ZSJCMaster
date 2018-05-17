@@ -307,11 +307,18 @@ namespace ZSJCMaster.ViewModels
         {
             //填充端口号
             this.PortList = new List<MyPort>();
-            for (int i = 1; i <= 30; i++)
+            string[] ports = SerialPort.GetPortNames();
+            for (int i = 1; i <= ports.Length; i++)
             {
-                var port = new MyPort() { DisplayName = "COM" + i, Value = "COM" + i };
+                var port = new MyPort() { DisplayName = ports[i-1], Value = ports[i-1] };
                 this.PortList.Add(port);
             }
+            //for (int i = 1; i <= 30; i++)
+            //{
+            //    var port = new MyPort() { DisplayName = "COM" + i, Value = "COM" + i };
+            //    this.PortList.Add(port);
+            //}
+            this.PortList.Insert(0, new MyPort() { DisplayName="无", Value="None" });
         }
 
         private void InitBaudRates()
@@ -399,7 +406,7 @@ namespace ZSJCMaster.ViewModels
             //读取配置文件
             //串口
             SerialComm comm = new SerialComm();
-            this.PortName = PortList.SingleOrDefault(p => p.DisplayName == comm.PortName);
+            this.PortName = PortList.SingleOrDefault(p => p.Value.ToString() == comm.PortName);
             this.BaudRate = BaudRateList.SingleOrDefault(b => (int)b.Value == comm.BaudRate);
             this.Parity = ParityList.SingleOrDefault(p => (Parity)p.Value == comm.Parity);
             this.DataBits = DataBitList.SingleOrDefault(d => (int)d.Value == comm.DataBits);
