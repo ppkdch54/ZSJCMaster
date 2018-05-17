@@ -57,7 +57,7 @@ namespace ZSJCMaster.ViewModels
             currentIndex++;
             if (currentIndex == tabs.Links.Count)
             {
-                #if RELEASE
+                #if !DEBUG
                 //修改配置不再显示设置向导
                 XDocument doc = XDocument.Load("Application.config");
                 doc.Descendants("showSetupWizard").Single().SetAttributeValue("show", "false");
