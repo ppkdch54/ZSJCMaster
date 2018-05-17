@@ -114,7 +114,7 @@ namespace ZSJCMaster.Models
 
         public void SendData(Byte[] data)
         {
-            if (serial.IsOpen)
+            if (serial != null && serial.IsOpen)
             {
                 serial.Write(data, 0, data.Length);
             }
