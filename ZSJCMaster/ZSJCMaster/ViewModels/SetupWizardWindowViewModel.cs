@@ -46,7 +46,6 @@ namespace ZSJCMaster.ViewModels
             }
         }
 
-
         public DelegateCommand<ExCommandParameter> ForwardSetupCommand { get; set; }
         public DelegateCommand<ExCommandParameter> BackwardSetupCommand { get; set; }
         public DelegateCommand<ExCommandParameter> ExitSetupCommand { get; set; }
@@ -64,17 +63,9 @@ namespace ZSJCMaster.ViewModels
                 doc.Save("Application.config");
                 #endif
                 //重启软件
-                Task.Run(() =>
-                {
-                    System.Threading.Thread.Sleep(3000);
-                    App.Current.Dispatcher.Invoke(() =>
-                    {
-                        System.Windows.Forms.Application.Restart();
-                        Application.Current.Shutdown();
-                    });
-                });
-                ModernDialog.ShowMessage("将立即重启以使设置生效，稍后您可以通过系统设置页面更改设置!", "提示", MessageBoxButton.OK);
-                
+                MessageBox.Show("将立即重启以使设置生效，稍后您可以通过系统设置页面更改设置!", "提示", MessageBoxButton.OK,MessageBoxImage.Information);
+                Application.Current.Shutdown();
+                System.Windows.Forms.Application.Restart();
                 return;
             }
             tabs.SelectedSource = tabs.Links[currentIndex].Source;

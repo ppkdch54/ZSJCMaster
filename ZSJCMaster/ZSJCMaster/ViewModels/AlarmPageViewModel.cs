@@ -126,6 +126,7 @@ namespace ZSJCMaster.ViewModels
                                             CurrentItem = info[i];
 
                                             //向其他客户机发送报警数据
+                                            
                                             if (clients.Count() > 0)
                                             {
                                                 foreach (var client in clients)
