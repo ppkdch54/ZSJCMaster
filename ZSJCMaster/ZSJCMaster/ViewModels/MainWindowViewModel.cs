@@ -61,16 +61,10 @@ namespace ZSJCMaster.ViewModels
             if (string.IsNullOrEmpty(user.UserName))
             {
                 LoginWindow login = new LoginWindow();
-
-                #if DEBUG
-                user = User.GetAdmin();
-                #else
                 login.ShowDialog();
                 //重新检测
                 user = User.GetInstance();
-                #endif
-
-                if (string.IsNullOrEmpty(user.UserName))
+                if (!user.State)
                 {
                     Environment.Exit(0);
                 }

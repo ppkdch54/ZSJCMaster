@@ -155,6 +155,7 @@ namespace ZSJCMaster.ViewModels
                     SwitchCameraNetPort(camera);
                     System.Threading.Thread.Sleep(3000);
                     camera.IsSwitching = false;
+                    /*
                     Task.Run(() =>
                     {
                         try
@@ -216,6 +217,7 @@ namespace ZSJCMaster.ViewModels
                         }
                         
                     });
+                    */
                     //启动远程桌面
                     Process p = Process.Start("mstsc.exe");
                 });
