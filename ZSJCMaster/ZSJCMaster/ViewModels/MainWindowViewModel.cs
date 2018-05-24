@@ -87,6 +87,14 @@ namespace ZSJCMaster.ViewModels
                     menu.Items.Add(new MenuItem() { Header = "退出", Command = ExitCommand });
                     icon.ContextMenu = menu;
                 }
+                //是否运行设置向导
+                XDocument doc = XDocument.Load("Application.config");
+                string showSetupWizard = doc.Descendants("showSetupWizard").Single().Attribute("show").Value;
+                if(showSetupWizard.ToUpper() == "TRUE")
+                {
+                    SetupWizardWindow setupWizard = new SetupWizardWindow();
+                    setupWizard.ShowDialog();
+                }
             }
         }
 
