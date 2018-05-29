@@ -158,10 +158,11 @@ namespace ZSJCMaster.Models
             this.ip = ip;
             this.port = port;
             this.tcpRecv = tcpRecv;
+            simpleTcp = new SimpleTcpClient();
             AlarmFlags = new bool[5];
             try
             {
-                simpleTcp = new SimpleTcpClient().Connect(ip, port);
+                simpleTcp.Connect(ip, port);
                 simpleTcp.DataReceived += (sender, msg) =>
                 {
                     Decode(msg.Data);
@@ -217,7 +218,7 @@ namespace ZSJCMaster.Models
                     try
                     {
                         simpleTcp.TcpClient.Close();
-                        simpleTcp = new SimpleTcpClient().Connect(ip, port);
+                        simpleTcp.Connect(ip, port);
                         simpleTcp.DataReceived += (sender, msg) =>
                         {
                             Decode(msg.Data);
