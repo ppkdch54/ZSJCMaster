@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using ZSJCMaster.Helpers;
 
@@ -138,10 +139,24 @@ namespace ZSJCMaster.Models
     {
         SimpleTcpClient simpleTcp;
         TcpRecvDelegate tcpRecv;
+        string ip;
+        int port;
+
+        private bool isConnection;
+        /// <summary>
+        /// 获取或者设置网络连接状态
+        /// </summary>
+        public bool IsConnection
+        {
+            get { return isConnection; }
+            set { isConnection = value; }
+        }
 
         public TcpComm() { }
         public TcpComm(string ip, int port,TcpRecvDelegate tcpRecv)
         {
+            this.ip = ip;
+            this.port = port;
             this.tcpRecv = tcpRecv;
             AlarmFlags = new bool[5];
             try
@@ -152,11 +167,14 @@ namespace ZSJCMaster.Models
                     Decode(msg.Data);
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                IsConnection = false;
             }
-
+            Task.Run(() =>
+            {
+                checkState();
+            });
         }
 
         ~TcpComm()
@@ -176,11 +194,44 @@ namespace ZSJCMaster.Models
         {
             if (simpleTcp!=null)
             {
-                simpleTcp.Write(data);
+                try
+                {
+                    simpleTcp.Write(data);
+                }
+                catch (Exception)
+                {
+                    IsConnection = false;
+                }
+                
             }
             
         }
 
+        private void checkState()
+        {
+            while (true)
+            {
+                Thread.Sleep(1000);
+                if (simpleTcp.TcpClient.Connected == false)
+                {
+                    try
+                    {
+                        simpleTcp.TcpClient.Close();
+                        simpleTcp = new SimpleTcpClient().Connect(ip, port);
+                        simpleTcp.DataReceived += (sender, msg) =>
+                        {
+                            Decode(msg.Data);
+                        };
+                        IsConnection = true;
+                    }
+                    catch
+                    {
+                        IsConnection = false;
+                    }
+                }
+
+            }
+        }
         private void Decode(byte[] bytes)
         {
             if (bytes.Length >= 30)
