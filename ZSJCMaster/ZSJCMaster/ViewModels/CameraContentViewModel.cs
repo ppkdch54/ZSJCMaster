@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,6 +69,30 @@ namespace ZSJCMaster.ViewModels
             var camera = this.Cameras.SingleOrDefault(c => c.Id == id);
             if (camera == null) { return; }
             Camera.UpdateCamera(camera);
+            //生成配置文件
+            //是否存在指定IP的RDP文件
+            string fileName = camera.Name + ".rdp";
+            if (!File.Exists(fileName))
+            {
+                //如果不存在，拷贝模板文件，并改名
+                File.Copy("ip.rdp", fileName);
+            }
+
+            string content = File.ReadAllText(fileName);
+            //替换ip
+            if (!string.IsNullOrEmpty(content))
+            {
+                //找到IP地址字符串
+                int startIndex = content.IndexOf("full address:s:")+ "full address:s:".Length;
+                int endIndex = content.IndexOf("audiomode");
+                //截取出IP地址
+                string oldIp = content.Substring(startIndex, endIndex - startIndex);
+                //替换
+                string newContent = content.Replace(oldIp, camera.IP+"\r\n");
+                //写出到文件
+                File.WriteAllText(fileName, newContent);
+            }
+
         }
         private void AddNewCamera()
         {

@@ -155,7 +155,7 @@ namespace ZSJCMaster.ViewModels
                     SwitchCameraNetPort(camera);
                     System.Threading.Thread.Sleep(3000);
                     camera.IsSwitching = false;
-                    /*
+                    
                     Task.Run(() =>
                     {
                         try
@@ -217,9 +217,19 @@ namespace ZSJCMaster.ViewModels
                         }
                         
                     });
-                    */
-                    //启动远程桌面
-                    Process p = Process.Start("mstsc.exe");
+
+                    //启动远程桌面,使用mstsc命令读取rdp文件
+                    string rdpFile = camera.Name + ".rdp";
+                    if (!File.Exists(rdpFile))
+                    {
+                        ExecuteCmd($"mstsc /admin");
+                    }
+                    else
+                    {
+                        ExecuteCmd($"mstsc /admin \"{rdpFile}\"");
+                    }
+                   
+                    
                 });
             }
             catch (Exception ex)
@@ -230,6 +240,28 @@ namespace ZSJCMaster.ViewModels
                 });
             }
 
+        }
+
+        public string ExecuteCmd(params string[] cmd)
+        {
+            Process p = new Process();
+            p.StartInfo.FileName = "cmd.exe";
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardInput = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
+            p.StartInfo.CreateNoWindow = true;
+            p.Start();
+            p.StandardInput.AutoFlush = true;
+            for (int i = 0; i < cmd.Length; i++)
+            {
+                p.StandardInput.WriteLine(cmd[i].ToString());
+            }
+            p.StandardInput.WriteLine("exit");
+            string strRst = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+            p.Close();
+            return strRst;
         }
 
         #endregion command functions

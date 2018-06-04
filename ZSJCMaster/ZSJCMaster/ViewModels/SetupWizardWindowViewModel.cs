@@ -56,12 +56,11 @@ namespace ZSJCMaster.ViewModels
             currentIndex++;
             if (currentIndex == tabs.Links.Count)
             {
-                #if !DEBUG
                 //修改配置不再显示设置向导
                 XDocument doc = XDocument.Load("Application.config");
                 doc.Descendants("showSetupWizard").Single().SetAttributeValue("show", "false");
                 doc.Save("Application.config");
-                #endif
+                
                 //重启软件
                 MessageBox.Show("将立即重启以使设置生效，稍后您可以通过系统设置页面更改设置!", "提示", MessageBoxButton.OK,MessageBoxImage.Information);
                 Application.Current.Shutdown();
