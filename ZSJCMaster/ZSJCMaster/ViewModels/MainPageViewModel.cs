@@ -205,10 +205,10 @@ namespace ZSJCMaster.ViewModels
                         }
                         catch (Exception ex)
                         {
-                            App.Current.Dispatcher.Invoke(() =>
-                            {
-                                ModernDialog.ShowMessage(ex.Message+",图片采集已中止！", "提示", MessageBoxButton.OK);
-                            });
+                            //App.Current.Dispatcher.Invoke(() =>
+                            //{
+                            //    ModernDialog.ShowMessage(ex.Message+",图片采集已中止！", "提示", MessageBoxButton.OK);
+                            //});
 
                         }
                         finally
