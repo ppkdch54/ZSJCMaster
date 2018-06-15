@@ -1,0 +1,210 @@
+﻿<UserControl x:Class="ZSJCMaster.Contents.CameraContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:helper="clr-namespace:ZSJCMaster.Helpers"
+             xmlns:validation="clr-namespace:ZSJCMaster.Validations"
+             mc:Ignorable="d" 
+             x:Name="cameraContent"
+             d:DesignHeight="400" d:DesignWidth="500">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <helper:ExInvokeCommandAction Command="{Binding PageLoadedCommand}" CommandParameter="{Binding ElementName=cameraContent}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <UserControl.Resources>
+        <Style x:Key="contentCenterStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="btnFIcon" TargetType="Button">
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#iconfont" />
+            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+            <Setter Property="FontSize" Value="20"></Setter>
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border BorderThickness="0">
+                            <ContentPresenter Content="{TemplateBinding Button.Content}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid Style="{StaticResource ContentRoot}">
+        <Grid Margin="-10 -40 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="请选择控制板:" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                <ComboBox x:Name="cboControlPads" Width="150" 
+                      ItemsSource="{Binding ControlPads}" 
+                      DisplayMemberPath="Name" SelectedValuePath="Id"
+                      VerticalContentAlignment="Center"
+                      SelectedItem="{Binding CurrentControlPad}"
+                      HorizontalAlignment="Left">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <helper:ExInvokeCommandAction Command="{Binding SelectControlPadCommand}" CommandParameter="{Binding ElementName=cboControlPads}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+            </StackPanel>
+            <Button x:Name="btnAddCamera" Grid.Column="1" Command="{Binding AddNewCameraCommand}" FontSize="13" Cursor="Hand"
+                        VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="5 0">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="IsEnabled" Value="True"/>
+                        <Setter Property="Foreground" Value="Gray"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=cboControlPads,Path=SelectedItem}" Value="{x:Null}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <Setter Property="Foreground" Value="LightGray"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate>
+                        <Border>
+                            <Label Content="{TemplateBinding Button.Content}" Foreground="{TemplateBinding Button.Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xe6a3;">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#iconfont" />
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Text="增加"/>
+                </StackPanel>
+            </Button>
+            <DataGrid x:Name="dgvCameras" Grid.Row="1" Grid.ColumnSpan="2" Margin="0 10" 
+                      ItemsSource="{Binding Cameras}" AutoGenerateColumns="False" 
+                      CanUserAddRows="False" SelectionMode="Single">
+                <DataGrid.Columns>
+                    <mui:DataGridTextColumn Width="30" Binding="{Binding Id}" IsReadOnly="True" ElementStyle="{StaticResource contentCenterStyle}"/>
+                    <mui:DataGridTextColumn Header="名称" Width="100" ElementStyle="{StaticResource contentCenterStyle}">
+                        <mui:DataGridTextColumn.Binding>
+                            <Binding Path="Name" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule></ExceptionValidationRule>
+                                    <validation:RequiredRule></validation:RequiredRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </mui:DataGridTextColumn.Binding>
+                    </mui:DataGridTextColumn>
+                    <mui:DataGridTextColumn Header="IP" Width="100" ElementStyle="{StaticResource contentCenterStyle}">
+                        <mui:DataGridTextColumn.Binding>
+                            <Binding Path="IP" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule></ExceptionValidationRule>
+                                    <validation:RequiredRule ></validation:RequiredRule>
+                                    <validation:IPv4Rule></validation:IPv4Rule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </mui:DataGridTextColumn.Binding>
+                    </mui:DataGridTextColumn>
+                    <!--
+                    <mui:DataGridTextColumn Header="皮带编号" Width="90" ElementStyle="{StaticResource contentCenterStyle}">
+                        <mui:DataGridTextColumn.Binding>
+                            <Binding Path="BeltNo" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnNotifyDataErrors="True">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule></ExceptionValidationRule>
+                                    <validation:RequiredRule ></validation:RequiredRule>
+                                    <validation:IPv4Rule></validation:IPv4Rule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </mui:DataGridTextColumn.Binding>
+                    </mui:DataGridTextColumn>
+                    -->
+                    <mui:DataGridTextColumn Header="网口" Width="60" ElementStyle="{StaticResource contentCenterStyle}">
+                        <mui:DataGridTextColumn.Binding>
+                            <Binding Path="NetPortNum" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnDataErrors="True">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule></ExceptionValidationRule>
+                                    <validation:RequiredRule></validation:RequiredRule>
+                                    <validation:PortRule></validation:PortRule>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </mui:DataGridTextColumn.Binding>
+                    </mui:DataGridTextColumn>
+                    <!-- 保存图片路径-->
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Width="80" VerticalContentAlignment="Center">
+                                        <TextBox.Text>
+                                            <Binding Path="AlarmPicDir" Mode="TwoWay" UpdateSourceTrigger="LostFocus" ValidatesOnDataErrors="True">
+                                                <Binding.ValidationRules>
+                                                    <ExceptionValidationRule></ExceptionValidationRule>
+                                                    <validation:RequiredRule></validation:RequiredRule>
+                                                    <validation:PathRule></validation:PathRule>
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                    <Button x:Name="btnSelectPath" Content="..." Width="40" Tag="{Binding Id}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <helper:ExInvokeCommandAction Command="{Binding DataContext.SelectAlarmPicPathCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=UserControl}}" CommandParameter="{Binding ElementName=btnSelectPath}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <!-- 操作按钮 -->
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="btnDeleteCamera" Tag="{Binding Id}" Content="&#xe613;" ToolTip="删除" Style="{StaticResource btnFIcon}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <helper:ExInvokeCommandAction Command="{Binding DataContext.DeleteCameraCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=UserControl}}" CommandParameter="{Binding ElementName=btnDeleteCamera}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="RowEditEnding">
+                        <helper:ExInvokeCommandAction Command="{Binding RowEditEndingCommand}" CommandParameter="{Binding ElementName=dgvCameras}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</UserControl>

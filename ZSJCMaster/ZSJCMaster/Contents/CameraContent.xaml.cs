@@ -14,17 +14,17 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ZSJCMaster.ViewModels;
 
-namespace ZSJCMaster.Pages
+namespace ZSJCMaster.Contents
 {
     /// <summary>
-    /// Interaction logic for RecordPage.xaml
+    /// Interaction logic for CameraContent.xaml
     /// </summary>
-    public partial class RecordPage : UserControl
+    public partial class CameraContent : UserControl
     {
-        public RecordPage()
+        public CameraContent()
         {
             InitializeComponent();
-            this.DataContext = new RecordPageViewModel();
+            this.DataContext = new CameraContentViewModel();
         }
     }
 }

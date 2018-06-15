@@ -32,7 +32,11 @@ namespace ZSJCMaster.ViewModels
         }
         private void AddNewControlPad()
         {
-            int id = this.ControlPads.Max(p => p.Id);
+            int id = 0;
+            if(this.ControlPads.Count > 0)
+            {
+                id = this.ControlPads.Max(p => p.Id);
+            }
             ControlPad pad = new ControlPad()
             {
                 Id = id + 1,

@@ -1,0 +1,49 @@
+﻿<mui:ModernWindow x:Class="ZSJCMaster.Views.SetupWizardWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                  xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:helper="clr-namespace:ZSJCMaster.Helpers"
+                  mc:Ignorable="d" 
+                  d:DesignHeight="250" d:DesignWidth="450" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
+                  Title="设置向导" x:Name="window"
+                  Style="{StaticResource BlankWindow}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+        <mui:ModernTab x:Name="tabs" SelectedSource="Contents\ControlPadContent.xaml" Layout="Tab" Margin="0 25 0 0">
+            <mui:ModernTab.Links>
+                <mui:Link DisplayName="控制板" Source="Contents\ControlPadContent.xaml" />
+                <mui:Link DisplayName="相机" Source="Contents\CameraContent.xaml" />
+                <mui:Link DisplayName="报警设置" Source="Contents\AlarmContent.xaml" />
+            </mui:ModernTab.Links>
+        </mui:ModernTab>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
+            <Button Content="&lt;- 后退" Width="80" Margin="5 0" IsEnabled="{Binding EnableBackwardButton}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <helper:ExInvokeCommandAction Command="{Binding BackwardSetupCommand}" CommandParameter="{Binding ElementName=tabs}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+            <Button Content="{Binding ForwardButtonText}" Width="80" Margin="5 0">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <helper:ExInvokeCommandAction Command="{Binding ForwardSetupCommand}" CommandParameter="{Binding ElementName=tabs}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+            <Button x:Name="btnExit" Content="退出" Width="80" Margin="5 0">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <helper:ExInvokeCommandAction Command="{Binding ExitSetupCommand}" CommandParameter="{Binding ElementName=window}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+        </StackPanel>
+    </Grid>
+</mui:ModernWindow>

@@ -14,17 +14,17 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ZSJCMaster.ViewModels;
 
-namespace ZSJCMaster.Pages
+namespace ZSJCMaster.Contents
 {
     /// <summary>
-    /// Interaction logic for RecordPage.xaml
+    /// Interaction logic for AlarmContent.xaml
     /// </summary>
-    public partial class RecordPage : UserControl
+    public partial class AlarmContent : UserControl
     {
-        public RecordPage()
+        public AlarmContent()
         {
             InitializeComponent();
-            this.DataContext = new RecordPageViewModel();
+            this.DataContext = new AlarmContentViewModel();
         }
     }
 }

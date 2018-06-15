@@ -11,27 +11,21 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ZSJCMaster.ViewModels;
 
 namespace ZSJCMaster.Views
 {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    /// Interaction logic for SetupWizardWindow.xaml
     /// </summary>
-    public partial class MainWindow : ModernWindow
+    public partial class SetupWizardWindow : ModernWindow
     {
-        public MainWindow()
+        public SetupWizardWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainWindowViewModel();
-        }
-
-        private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = true;
-            this.Visibility = Visibility.Hidden;
-            this.ShowInTaskbar = false;
+            this.DataContext = new SetupWizardWindowViewModel();
         }
     }
 }
