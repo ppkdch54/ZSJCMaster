@@ -98,7 +98,8 @@ namespace ZSJCMaster.ViewModels
                             {
                                 App.Current.Dispatcher.Invoke(() =>
                                 {
-                                    for (int i = 0; i < states.Length; i++)
+                                    //对于5个信息区都进行搜索,不判断标志位
+                                    for (int i = 0; i < 5; i++)
                                     {
                                         if (!IsEmpty(info[i]))
                                         {
