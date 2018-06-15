@@ -22,7 +22,7 @@ namespace ZSJCMaster.DB
             string connString;
             if (mysqlconn == null)
             {
-                connString = "Server=127.0.0.1;Database=ZSJC;Uid=root;Pwd=123456;";
+                connString = "Server=127.0.0.1;Database=ZSJC;Uid=root;Pwd=123456;charset=utf8";
             }else
             {
                 connString = mysqlconn.Attribute("connectionString").Value;
@@ -62,17 +62,19 @@ namespace ZSJCMaster.DB
 
         public int Add(AlarmInfoForDB info)
         {
-            string sql = "insert into alarminfo (ControlPadId,CameraId,X,Y,InfoTime) values (@ControlPadId,@CameraId,@X,@Y,@InfoTime)";
+            string sql = "insert into alarminfo (ControlPadId,ControlPadName,CameraId,CameraName,X,Y,InfoTime) values (@ControlPadId,@ControlPadName,@CameraId,@CameraName,@X,@Y,@InfoTime)";
             return helper.Execute(sql, info);
         }
 
-        public AlarmInfoForDB AlarmInfoToAlarmInfoForDB(int controlpadId,AlarmInfo info)
+        public AlarmInfoForDB AlarmInfoToAlarmInfoForDB(int controlpadId,string controlpadName,AlarmInfo info)
         {
             if (info == null) { return new AlarmInfoForDB(); }
             AlarmInfoForDB db = new AlarmInfoForDB()
             {
                 ControlPadId = controlpadId,
+                ControlPadName = controlpadName,
                 CameraId = info.CameraNo,
+                CameraName = info.CameraName,
                 X = info.X,
                 Y = info.Y,
                 InfoTime = DateTime.Parse(info.InfoTime)

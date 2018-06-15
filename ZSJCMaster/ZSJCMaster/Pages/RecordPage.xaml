@@ -66,8 +66,8 @@
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="100"/>
-                        <GridViewColumn Header="控制板" DisplayMemberBinding="{Binding ControlPadId}" Width="110"/>
-                        <GridViewColumn Header="相机" DisplayMemberBinding="{Binding CameraId}" Width="110"/>
+                        <GridViewColumn Header="控制板" DisplayMemberBinding="{Binding ControlPadName}" Width="110"/>
+                        <GridViewColumn Header="相机" DisplayMemberBinding="{Binding CameraName}" Width="110"/>
                         <GridViewColumn Header="X" DisplayMemberBinding="{Binding X}" Width="80"/>
                         <GridViewColumn Header="Y" DisplayMemberBinding="{Binding Y}" Width="80"/>
                         <GridViewColumn Header="时间" DisplayMemberBinding="{Binding InfoTime,StringFormat={}{0:yyyy-MM-dd HH:mm:ss }}" Width="180"/>

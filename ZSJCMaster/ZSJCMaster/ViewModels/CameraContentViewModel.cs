@@ -75,7 +75,7 @@ namespace ZSJCMaster.ViewModels
             if (!File.Exists(fileName))
             {
                 //如果不存在，拷贝模板文件，并改名
-                File.Copy("ip.rdp", fileName);
+                File.Copy("IP.rdp", fileName);
             }
 
             string content = File.ReadAllText(fileName);

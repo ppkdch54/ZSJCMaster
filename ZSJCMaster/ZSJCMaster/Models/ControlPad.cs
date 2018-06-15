@@ -14,9 +14,10 @@ using FirstFloor.ModernUI.Windows.Controls;
 
 namespace ZSJCMaster.Models
 {
-    public class ControlPad: BindableBase
+    public class ControlPad : BindableBase
     {
-        static TcpComm tcpComm;
+        static List<TcpComm> tcpComms = new List<TcpComm>();
+        TcpComm tcpComm;
         byte[] command;
 
         #region 属性
@@ -105,10 +106,12 @@ namespace ZSJCMaster.Models
             {
                 //读取参数
                 LoadPara(controlpadId);
-                //初始化TCP连接
+                //查找TCP连接
+                tcpComm = tcpComms.SingleOrDefault(t => t.ControlPadId == controlpadId);
                 if (tcpComm==null)
                 {
-                    tcpComm = new TcpComm(IP, PortNum, tcpRecv);
+                    tcpComm = new TcpComm(controlpadId,IP, PortNum, tcpRecv);
+                    tcpComms.Add(tcpComm);
                 }
                 Task.Run(() =>
                 {
@@ -180,14 +183,11 @@ namespace ZSJCMaster.Models
             foreach (var item in controlpads)
             {
                 var attrs = item.Attributes();
-                ControlPad pad = new ControlPad()
-                {
-                    Id = int.Parse(attrs.SingleOrDefault(a => a.Name == "id").Value),
-                    Name = attrs.SingleOrDefault(a => a.Name == "name").Value,
-                    IP = attrs.SingleOrDefault(a => a.Name == "ip").Value,
-                    PortNum = int.Parse(attrs.SingleOrDefault(a => a.Name == "port").Value)
-                };
-
+                ControlPad pad = new ControlPad();
+                pad.Id = int.Parse(attrs.SingleOrDefault(a => a.Name == "id").Value);
+                pad.Name = attrs.SingleOrDefault(a => a.Name == "name").Value;
+                pad.IP = attrs.SingleOrDefault(a => a.Name == "ip").Value;
+                pad.PortNum = int.Parse(attrs.SingleOrDefault(a => a.Name == "port").Value);
                 list.Add(pad);
             }
             return list;

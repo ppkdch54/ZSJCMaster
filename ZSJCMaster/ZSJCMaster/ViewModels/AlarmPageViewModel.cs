@@ -53,6 +53,8 @@ namespace ZSJCMaster.ViewModels
             }
         }
 
+        static List<Camera> CameraList = new List<Camera>();
+
         public DelegateCommand ClearAlarmListCommand { get; set; }
         private void ClearAlamList()
         {
@@ -89,20 +91,21 @@ namespace ZSJCMaster.ViewModels
                     //如果是服务器才向控制板发送数据
                     foreach (var controlpad in this.ControlPads)
                     {
-                        this.Cameras = controlpad.GetCameras();
+                        CameraList.AddRange(controlpad.GetCameras());
                         try
                         {
-                            ControlPad pad = new ControlPad(controlpad.Id, (AlarmInfo[] info, bool[] flags) =>
+                            ControlPad pad = new ControlPad(controlpad.Id, (AlarmInfo[] info, ControlPadState[] states) =>
                             {
                                 App.Current.Dispatcher.Invoke(() =>
                                 {
-                                    for (int i = 0; i < flags.Length; i++)
+                                    for (int i = 0; i < states.Length; i++)
                                     {
                                         if (!IsEmpty(info[i]))
                                         {
                                             if (controlpad != null)
                                             {
-                                                var camera = this.Cameras.SingleOrDefault(c => c.Id == info[i].CameraNo);
+                                                var camera = CameraList.SingleOrDefault(c => c.Id == info[i].CameraNo 
+                                                                && c.ControlPadNo == controlpad.Id);
                                                 if (camera != null)
                                                 {
                                                     info[i].CameraName = camera.Name;
@@ -131,11 +134,11 @@ namespace ZSJCMaster.ViewModels
                                             {
                                                 foreach (var client in clients)
                                                 {
-                                                    string ip = client.Attribute("ip").Value;
+                                                    string IP = client.Attribute("ip").Value;
                                                     int port = int.Parse(client.Attribute("port").Value);
-                                                    if (ip != serverIP)
+                                                    if (IP != serverIP)
                                                     {
-                                                        UdpComm comm = new UdpComm(ip, port);
+                                                        UdpComm comm = new UdpComm(IP, port);
                                                         XmlSerializer xs = new XmlSerializer(typeof(AlarmInfo));
                                                         var ms = new MemoryStream();
                                                         xs.Serialize(ms, CurrentItem);
@@ -147,7 +150,7 @@ namespace ZSJCMaster.ViewModels
                                             }
                                             //写入数据库
 
-                                            ope.Add(ope.AlarmInfoToAlarmInfoForDB(controlpad.Id, info[i]));
+                                            ope.Add(ope.AlarmInfoToAlarmInfoForDB(controlpad.Id,controlpad.Name,info[i]));
                                             
                                         }
                                     }
@@ -172,9 +175,9 @@ namespace ZSJCMaster.ViewModels
        
                         foreach (var client in clients)
                         {
-                            string ip = client.Attribute("ip").Value;
+                            string IP = client.Attribute("ip").Value;
                             int port = int.Parse(client.Attribute("port").Value);
-                            if (ipadrlist.Contains(IPAddress.Parse(ip)))
+                            if (ipadrlist.Contains(IPAddress.Parse(IP)))
                             {
                                 //找到本机
                                 Task.Run(() => 
@@ -204,7 +207,6 @@ namespace ZSJCMaster.ViewModels
                     });
                 }
             });
-
         }
 
         private bool IsEmpty(AlarmInfo alarmInfo)

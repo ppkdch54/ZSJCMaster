@@ -133,37 +133,33 @@ namespace ZSJCMaster.Models
         }
     }
 
-    public delegate void TcpRecvDelegate(AlarmInfo[] alarms, bool[] flags);
+    public delegate void TcpRecvDelegate(AlarmInfo[] alarms, ControlPadState[] states);
 
     public class TcpComm : BindableBase
     {
-        SimpleTcpClient simpleTcp;
-        TcpRecvDelegate tcpRecv;
-        string ip;
-        int port;
-
-        private bool isConnection;
+        public SimpleTcpClient SimpleTcp { get; }
+        public TcpRecvDelegate TcpRecv { get; set; }
+        public int ControlPadId { get; set; }
+        public string IP { get; set; }
+        public int Port { get; set; }
         /// <summary>
         /// 获取或者设置网络连接状态
         /// </summary>
-        public bool IsConnection
-        {
-            get { return isConnection; }
-            set { isConnection = value; }
-        }
+        public bool IsConnection { get; set; }
 
         public TcpComm() { }
-        public TcpComm(string ip, int port,TcpRecvDelegate tcpRecv)
+        public TcpComm(int controlpadId,string ip, int port,TcpRecvDelegate tcpRecv)
         {
-            this.ip = ip;
-            this.port = port;
-            this.tcpRecv = tcpRecv;
-            simpleTcp = new SimpleTcpClient();
-            AlarmFlags = new bool[5];
+            this.ControlPadId = controlpadId;
+            this.IP = ip;
+            this.Port = port;
+            this.TcpRecv = tcpRecv;
+            SimpleTcp = new SimpleTcpClient();
+            ControlPadState = new ControlPadState[5];
             try
             {
-                simpleTcp.Connect(ip, port);
-                simpleTcp.DataReceived += (sender, msg) =>
+                SimpleTcp.Connect(ip, port);
+                SimpleTcp.DataReceived += (sender, msg) =>
                 {
                     Decode(msg.Data);
                 };
@@ -171,19 +167,20 @@ namespace ZSJCMaster.Models
             catch (Exception)
             {
                 IsConnection = false;
+                Task.Run(() =>
+                {
+                    checkState();
+                });
             }
-            Task.Run(() =>
-            {
-                checkState();
-            });
+
         }
 
         ~TcpComm()
         {
-            if (simpleTcp!=null)
+            if (SimpleTcp!=null)
             {
-                simpleTcp.Disconnect();
-                simpleTcp.Dispose();
+                SimpleTcp.Disconnect();
+                SimpleTcp.Dispose();
             }
 
         }
@@ -193,11 +190,11 @@ namespace ZSJCMaster.Models
         /// <param name="data">要发送的数据</param>
         public void SendData(byte[] data)
         {
-            if (simpleTcp!=null)
+            if (SimpleTcp!=null)
             {
                 try
                 {
-                    simpleTcp.Write(data);
+                    SimpleTcp.Write(data);
                 }
                 catch (Exception)
                 {
@@ -212,14 +209,14 @@ namespace ZSJCMaster.Models
         {
             while (true)
             {
-                Thread.Sleep(1000);
-                if (simpleTcp.TcpClient.Connected == false)
+                Thread.Sleep(40000);
+                if (SimpleTcp.TcpClient.Connected == false)
                 {
                     try
                     {
-                        simpleTcp.TcpClient.Close();
-                        simpleTcp.Connect(ip, port);
-                        simpleTcp.DataReceived += (sender, msg) =>
+                        SimpleTcp.TcpClient.Close();
+                        SimpleTcp.Connect(IP, Port);
+                        SimpleTcp.DataReceived += (sender, msg) =>
                         {
                             Decode(msg.Data);
                         };
@@ -248,7 +245,7 @@ namespace ZSJCMaster.Models
                             int offset = 7 + i;
                             for (int k = 0; k < 5; k++)
                             {
-                                AlarmFlags[k] = (bytes[k + 1] == 1);
+                                ControlPadState[k] = (ControlPadState)bytes[k + 1];
                                 AlarmInfos[k] = new AlarmInfo();
                                 //AlarmInfos[k].cameraNo = bytes[k * 4 + offset];
                                 AlarmInfos[k].X = bytes[k * 4 + offset];
@@ -257,18 +254,17 @@ namespace ZSJCMaster.Models
                                 AlarmInfos[k].Width = bytes[k * 4 + 3 + offset];
                                 AlarmInfos[k].InfoTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                             }
-                            bool alarmFlag = false;
-                            for (int j = 0; j < 5; j++)
-                            {
-                                if (AlarmFlags[j])
-                                {
-                                    alarmFlag = true;
-                                }
-                            }
+                            //for (int j = 0; j < 5; j++)
+                            //{
+                            //    if (ControlPadState[j])
+                            //    {
+                            //        alarmFlag = true;
+                            //    }
+                            //}
 
-                            if (alarmFlag && (this.tcpRecv != null))
+                            if (this.TcpRecv != null)
                             {
-                                this.tcpRecv(AlarmInfos, AlarmFlags);
+                                this.TcpRecv(AlarmInfos, ControlPadState);
                             }
                             break;
                         }
@@ -278,9 +274,16 @@ namespace ZSJCMaster.Models
             }
         }
 
-        public bool[] AlarmFlags { get; set; }
+        public ControlPadState[] ControlPadState { get; set; }
         public int CurrentNetPort { get; set; }
         public AlarmInfo[] AlarmInfos { get; set; }
+    }
+
+    public enum ControlPadState
+    {
+        None,
+        Alarm,
+        CameraException
     }
 
     public class UdpComm
@@ -331,7 +334,9 @@ namespace ZSJCMaster.Models
     {
         public long Id { get; set; }
         public int ControlPadId { get; set; }
+        public string ControlPadName { get; set; }
         public int CameraId { get; set; }
+        public string CameraName { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
         public DateTime InfoTime { get; set; }

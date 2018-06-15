@@ -291,7 +291,11 @@ namespace ZSJCMaster.ViewModels
             folderDlg.ShowNewFolderButton = true;
             folderDlg.RootFolder = Environment.SpecialFolder.Desktop;
             folderDlg.ShowDialog();
-            this.CopyImagePath = folderDlg.SelectedPath;
+            if(!string.IsNullOrEmpty(folderDlg.SelectedPath))
+            {
+                this.CopyImagePath = folderDlg.SelectedPath;
+            }
+            
         }
 
         private void ChangeCopyImagePath(ExCommandParameter param)
