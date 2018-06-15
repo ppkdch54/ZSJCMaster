@@ -58,7 +58,7 @@ namespace ZSJCMaster.ViewModels
             {
                 App.Current.Dispatcher.Invoke(() =>
                 {
-                    for (int i = 0; i < flags.Length; i++)
+                    for (int i = 0; i < 5; i++)
                     {
                         if (!IsEmpty(info[i]))
                         {
